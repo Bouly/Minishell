@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 09:42:29 by abendrih          #+#    #+#             */
-/*   Updated: 2025/10/29 16:01:42 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/02 16:41:25 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ void	simple_exec(t_token **token, char **envp)
 
 	args = tokens_to_array(token);
 	path = find_command(args[0], envp);
-	for (int i = 0; args[i]; i++)
-		ft_printf("%s\n", args[i]);
+	// for (int i = 0; args[i]; i++)
+	// 	ft_printf("%s\n", args[i]);
 	if (path)
 	{
 		id = fork();

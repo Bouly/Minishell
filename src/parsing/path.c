@@ -1,18 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init.c                                             :+:      :+:    :+:   */
+/*   path.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 09:29:21 by abendrih          #+#    #+#             */
-/*   Updated: 2025/10/29 09:31:40 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/02 16:10:36 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-// Fonction pour trouver le PATH dans envp
 char	*get_path_from_env(char **envp)
 {
 	int	i;
@@ -27,14 +26,13 @@ char	*get_path_from_env(char **envp)
 	return (NULL);
 }
 
-// Fonction pour chercher la commande dansles dossier du PATH
 char	*find_command(char *cmd, char **envp)
 {
-	char **dirs;
-	char *tmp;
-	char *path;
-	char *valid_cmd;
-	int i;
+	char	**dirs;
+	char	*tmp;
+	char	*path;
+	char	*valid_cmd;
+	int		i;
 
 	i = 0;
 	path = get_path_from_env(envp);

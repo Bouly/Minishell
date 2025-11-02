@@ -6,146 +6,109 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 04:18:54 by abendrih          #+#    #+#             */
-/*   Updated: 2025/10/31 19:51:55 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/02 16:53:56 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-static int	is_operator(char c)
+static int	handle_pipe(int *i, t_token **head)
 {
-	return (c == '|' || c == '<' || c == '>');
+	token_addback(head, token_new(TOKEN_PIPE, "|"));
+	*i += 1;
+	return (1);
 }
 
-static char	*extract_quoted_word(char *line, int *i, char quote_char)
+static int	handle_redirect(const char *line, int *i, t_token **head)
 {
-	char	*word;
-	int		start;
+	char	c;
 
-	start = *i + 1;
-	(*i)++;
-	while (line[*i] && line[*i] != quote_char)
-		(*i)++;
-	if (line[*i] == '\0')
+	c = line[*i];
+	if (c == '>')
 	{
-		return (NULL);
+		if (line[*i + 1] == '>')
+		{
+			token_addback(head, token_new(TOKEN_APPEND, ">>"));
+			*i += 2;
+			return (1);
+		}
+		token_addback(head, token_new(TOKEN_REDIRECT_OUT, ">"));
+		(*i)++;
+		return (1);
 	}
-	word = ft_substr(line, start, *i - start);
+	if (line[*i + 1] == '<')
+	{
+		token_addback(head, token_new(TOKEN_HEREDOC, "<<"));
+		*i += 2;
+		return (1);
+	}
+	token_addback(head, token_new(TOKEN_REDIRECT_IN, "<"));
 	(*i)++;
-	return (word);
+	return (1);
 }
 
-// À ajouter plus tard : guillemets, variables
+static int	handle_quote(char *line, int *i, t_token **head)
+{
+	char	quote;
+	char	*word;
+	int		token_type;
+
+	quote = line[*i];
+	word = extract_quoted_word(line, i, quote);
+	if (word == NULL)
+	{
+		ft_putstr_fd("syntax error: unclosed quote\n", 2);
+		return (0);
+	}
+	if (quote == '"')
+		token_type = TOKEN_WORD_DOUBLE_QUOTED;
+	else
+		token_type = TOKEN_WORD_SINGLE_QUOTED;
+	token_addback(head, token_new(token_type, word));
+	free(word);
+	return (1);
+}
+
+static int	handle_word(char *line, int *i, t_token **head)
+{
+	int		start;
+	char	*word;
+
+	start = *i;
+	while (line[*i] != '\0' && !is_space(line[*i]) && !is_operator(line[*i]))
+		(*i)++;
+	word = ft_substr(line, start, *i - start);
+	if (word == NULL)
+		return (0);
+	token_addback(head, token_new(TOKEN_WORD, word));
+	free(word);
+	return (1);
+}
+
 t_token	*lexer(char *line)
 {
 	t_token	*head;
 	int		i;
-	int		start;
-	char	*word;
+	int		ok;
 
 	head = NULL;
 	i = 0;
-	while (line[i])
+	while (line[i] != '\0')
 	{
-		while (line[i] == ' ')
-			i++;
-		if (!line[i])
+		i = skip_spaces(line, i);
+		if (line[i] == '\0')
 			break ;
+		ok = 1;
 		if (line[i] == '|')
-		{
-			token_addback(&head, token_new(TOKEN_PIPE, "|"));
-			i++;
-		}
+			ok = handle_pipe(&i, &head);
 		else if (line[i] == '>' || line[i] == '<')
-		{
-			if (line[i] == '>')
-			{
-				if (line[i + 1] == line[i])
-				{
-					token_addback(&head, token_new(TOKEN_APPEND, ">>"));
-					i += 2;
-				}
-				else
-				{
-					token_addback(&head, token_new(TOKEN_REDIRECT_OUT, ">"));
-					i++;
-				}
-			}
-			else if (line[i] == '<')
-			{
-				if (line[i + 1] == line[i])
-				{
-					token_addback(&head, token_new(TOKEN_HEREDOC, "<<"));
-					i += 2;
-				}
-				else
-				{
-					token_addback(&head, token_new(TOKEN_REDIRECT_IN, "<"));
-					i++;
-				}
-			}
-		}
-		else if (line[i] == '"')
-		{
-			word = extract_quoted_word(line, &i, '"');
-			if (word == NULL)
-			{
-				ft_putstr_fd("syntax error: unclosed quote\n", 2);
-				token_free(&head);
-				return (NULL);
-			}
-			token_addback(&head, token_new(TOKEN_WORD, word));
-			free(word);
-		}
-		else if (line[i] == '\'')
-		{
-			word = extract_quoted_word(line, &i, '\'');
-			if (word == NULL)
-			{
-				ft_putstr_fd("syntax error: unclosed quote\n", 2);
-				token_free(&head);
-				return (NULL);
-			}
-			token_addback(&head, token_new(TOKEN_WORD, word));
-			free(word);
-		}
+			ok = handle_redirect(line, &i, &head);
+		else if (is_quote(line[i]))
+			ok = handle_quote(line, &i, &head);
 		else
-		{
-			start = i;
-			while (line[i] && line[i] != ' ' && !is_operator(line[i]))
-				i++;
-			word = ft_substr(line, start, i - start);
-			token_addback(&head, token_new(TOKEN_WORD, word));
-			free(word);
-		}
+			ok = handle_word(line, &i, &head);
+		if (ok == 0)
+			return (token_free(&head), NULL);
 	}
 	return (head);
-}
-
-// Fonctionne bien pour commandes simples
-// Restera utile même avec les pipe
-char	**tokens_to_array(t_token **lst)
-{
-	int		i;
-	char	**args;
-
-	i = 0;
-	args = malloc(sizeof(char *) * (count_tokens(lst) + 1));
-	if (!args)
-		return (NULL);
-	while (*lst)
-	{
-		if ((*lst)->type != TOKEN_WORD)
-		{
-			args[i] = NULL;
-			if ((*lst)->next)
-				*lst = (*lst)->next;
-			return (args);
-		}
-		args[i] = ft_strdup((*lst)->value);
-		i++;
-		*lst = (*lst)->next;
-	}
-	args[i] = NULL;
-	return (args);
 }
