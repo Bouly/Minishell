@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 21:14:57 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/02 16:36:53 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/02 18:05:24 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	main(int ac, char **av, char **env)
 		add_history(line);
 		if (!line)
 		{
-			ft_putstr_fd("exit\n", 2);
+			ft_putstr_fd("exit\n", 2)
 			break ;
 		}
 		while (has_unclosed_quotes(line))
