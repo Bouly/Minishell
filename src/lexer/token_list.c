@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 00:57:58 by abendrih          #+#    #+#             */
-/*   Updated: 2025/10/29 09:19:55 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/02 16:48:55 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,15 +75,30 @@ int	count_tokens(t_token **lst)
 	return (i);
 }
 
-void	print_token(t_token **lst)
+char	**tokens_to_array(t_token **lst)
 {
-	t_token	*key;
+	int		i;
+	char	**args;
 
-	key = *lst;
-	while (key)
+	i = 0;
+	args = malloc(sizeof(char *) * (count_tokens(lst) + 1));
+	if (!args)
+		return (NULL);
+	while (*lst)
 	{
-		printf("%s qui a pour type : ", key->value);
-		printf("%d\n", key->type);
-		key = key->next;
+		if ((*lst)->type != TOKEN_WORD
+			&& (*lst)->type != TOKEN_WORD_DOUBLE_QUOTED
+			&& (*lst)->type != TOKEN_WORD_SINGLE_QUOTED)
+		{
+			args[i] = NULL;
+			if ((*lst)->next)
+				*lst = (*lst)->next;
+			return (args);
+		}
+		args[i] = ft_strdup((*lst)->value);
+		i++;
+		*lst = (*lst)->next;
 	}
+	args[i] = NULL;
+	return (args);
 }

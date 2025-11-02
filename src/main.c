@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 21:14:57 by abendrih          #+#    #+#             */
-/*   Updated: 2025/10/31 22:33:50 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/02 16:36:53 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,22 +46,24 @@ int	main(int ac, char **av, char **env)
 	{
 		line = readline("\033[1;91mEl Cancer > \033[0m");
 		add_history(line);
+		if (!line)
+		{
+			ft_putstr_fd("exit\n", 2);
+			break ;
+		}
 		while (has_unclosed_quotes(line))
 		{
-			printf("DEBUG: line avant readline = [%s]\n", line);
 			next = readline("> ");
 			add_history(line);
 			tmp = ft_strjoin(line, "\n");
 			line = ft_strjoin(tmp, next);
 			free(next);
-			printf("DEBUG: line après concat = [%s]\n", line);
 		}
 		if (!line)
 		{
 			ft_putstr_fd("exit\n", 2);
 			break ;
 		}
-		printf("DEBUG: line finale avant lexer = [%s]\n", line);
 		token = lexer(line);
 		if (token == NULL)
 		{
