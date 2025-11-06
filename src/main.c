@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 21:14:57 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/02 18:20:34 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/07 00:23:23 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	main(int ac, char **av, char **env)
 {
 	char	*line;
 	t_token	*token;
-	t_token	*save_token;
+	t_ast	*three;
 	char	*next;
 	char	*tmp;
 
@@ -70,9 +70,10 @@ int	main(int ac, char **av, char **env)
 			free(line);
 			continue ;
 		}
-		save_token = token;
 		free(line);
-		simple_exec(&token, env);
-		token_free(&save_token);
+		three = parse(token);
+		token_free(&token);
+		mother_exec(three, env, three);
+		ast_free(&three);
 	}
 }
