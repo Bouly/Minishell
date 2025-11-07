@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:29:04 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/07 00:23:27 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/07 14:45:17 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ void	cmd_exec(char **args, char **envp)
 	}
 	else
 	{
-		ft_free(args);
 		ft_putstr_fd("command not found\n", 2);
 	}
 }
