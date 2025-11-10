@@ -6,13 +6,12 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 21:47:35 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/06 20:31:14 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/07 17:12:20 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LEXER_H
 # define LEXER_H
-
 
 typedef enum e_token_type
 {
