@@ -6,7 +6,8 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/06 19:33:04 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/06 19:33:05 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/07 17:43:25 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../../includes/minishell.h"
