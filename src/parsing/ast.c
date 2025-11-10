@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 02:30:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/07 00:15:04 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/07 19:20:56 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,31 +77,18 @@ t_ast	*parse(t_token *tokens)
 	t_ast	*node;
 	t_token	*left_tokens;
 
-	// int		i;
-	// 1. Chercher s'il y a un pipe
 	pipe = find_pipe(tokens);
 	if (pipe)
 	{
-		// 2. Créer un nœud PIPE
 		node = create_node(NODE_PIPE, NULL);
-		// 3. Parser la partie AVANT le pipe (left)
 		left_tokens = befor_pipe(&tokens);
 		node->left = parse(left_tokens);
-		token_free(&left_tokens); // FREE la copie
-		// 4. Parser la partie APRÈS le pipe (right)
+		token_free(&left_tokens);
 		node->right = parse(pipe->next);
 	}
 	else
 	{
 		node = create_node(NODE_COMMAND, tokens_to_array(&tokens));
-		// printf("DEBUG: Commande créée avec args: ");
-		// i = 0;
-		// while (node->args && node->args[i])
-		// {
-		// 	printf("[%s] ", node->args[i]);
-		// 	i++;
-		// }
-		// printf("\n");
 	}
 	return (node);
 }

@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 04:18:54 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/02 16:53:56 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/10 22:04:30 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,39 +47,49 @@ static int	handle_redirect(const char *line, int *i, t_token **head)
 	return (1);
 }
 
-static int	handle_quote(char *line, int *i, t_token **head)
+static char	*accumulate_adjacent_parts(char *line, int *i)
 {
-	char	quote;
-	char	*word;
-	int		token_type;
+	char	*result;
+	char	*part;
+	int		start;
 
-	quote = line[*i];
-	word = extract_quoted_word(line, i, quote);
-	if (word == NULL)
+	result = ft_strdup("");
+	while (line[*i] && !is_space(line[*i]) && !is_operator(line[*i]))
 	{
-		ft_putstr_fd("syntax error: unclosed quote\n", 2);
-		return (0);
+		if (is_quote(line[*i]))
+		{
+			part = extract_quoted_word(line, i, line[*i]);
+			if (!part)
+				return (free(result), NULL);
+			result = ft_strjoin(result, part);
+			free(part);
+		}
+		else
+		{
+			start = *i;
+			while (line[*i] && !is_space(line[*i]) && !is_operator(line[*i])
+				&& !is_quote(line[*i]))
+				(*i)++;
+			part = ft_substr(line, start, *i - start);
+			result = ft_strjoin(result, part);
+			free(part);
+		}
 	}
-	if (quote == '"')
-		token_type = TOKEN_WORD_DOUBLE_QUOTED;
-	else
-		token_type = TOKEN_WORD_SINGLE_QUOTED;
-	token_addback(head, token_new(token_type, word));
-	free(word);
-	return (1);
+	return (result);
 }
 
 static int	handle_word(char *line, int *i, t_token **head)
 {
-	int		start;
 	char	*word;
 
-	start = *i;
-	while (line[*i] != '\0' && !is_space(line[*i]) && !is_operator(line[*i]))
-		(*i)++;
-	word = ft_substr(line, start, *i - start);
+	word = accumulate_adjacent_parts(line, i);
 	if (word == NULL)
 		return (0);
+	if (word[0] == '\0')
+	{
+		free(word);
+		return (1);
+	}
 	token_addback(head, token_new(TOKEN_WORD, word));
 	free(word);
 	return (1);
@@ -103,9 +113,7 @@ t_token	*lexer(char *line)
 			ok = handle_pipe(&i, &head);
 		else if (line[i] == '>' || line[i] == '<')
 			ok = handle_redirect(line, &i, &head);
-		else if (is_quote(line[i]))
-			ok = handle_quote(line, &i, &head);
-		else
+		else // ← Enlève le "else if (is_quote...)"
 			ok = handle_word(line, &i, &head);
 		if (ok == 0)
 			return (token_free(&head), NULL);
