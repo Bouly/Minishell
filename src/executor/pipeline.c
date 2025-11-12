@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 17:10:10 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/09 18:19:22 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/12 20:06:06 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ static void	close_fd(int fd[2], int n)
 
 void	pipe_exec(t_ast *three, char **envp, t_ast *root)
 {
-	int pid;
-	int pid2;
-	int fd[2];
+	int	pid;
+	int	pid2;
+	int	fd[2];
 
 	pipe(fd);
 	pid = fork();

@@ -6,17 +6,47 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:29:04 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/12 18:54:14 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/12 20:08:35 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+static void	setup_infile(char *infile)
+{
+	int	fd;
+
+	fd = open(infile, O_RDONLY);
+	if (fd < 0)
+	{
+		perror("open infile");
+		exit(1);
+	}
+	dup2(fd, STDIN_FILENO);
+	close(fd);
+}
+
+static void	setup_outfile(char *outfile, int append)
+{
+	int	fd;
+
+	if (append)
+		fd = open(outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	else
+		fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fd < 0)
+	{
+		perror("open outfile");
+		exit(1);
+	}
+	dup2(fd, STDOUT_FILENO);
+	close(fd);
+}
+
 void	cmd_exec(t_ast *node, char **envp)
 {
 	char	*path;
 	int		id;
-	int		fd;
 
 	path = find_command(node->args[0], envp);
 	if (!path)
@@ -28,30 +58,9 @@ void	cmd_exec(t_ast *node, char **envp)
 	if (id == 0)
 	{
 		if (node->infile)
-		{
-			fd = open(node->infile, O_RDONLY);
-			if (fd < 0)
-			{
-				perror("open infile");
-				exit(1);
-			}
-			dup2(fd, STDIN_FILENO);
-			close(fd);
-		}
+			setup_infile(node->infile);
 		if (node->outfile)
-		{
-			if (node->append)
-				fd = open(node->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
-			else
-				fd = open(node->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if (fd < 0)
-			{
-				perror("open outfile");
-				exit(1);
-			}
-			dup2(fd, STDOUT_FILENO);
-			close(fd);
-		}
+			setup_outfile(node->outfile, node->append);
 		execve(path, node->args, envp);
 		perror("execve");
 		free(path);
