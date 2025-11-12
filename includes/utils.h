@@ -1,13 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redirection.c                                      :+:      :+:    :+:   */
+/*   utils.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/06 19:33:04 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/07 17:43:25 by abendrih         ###   ########.fr       */
+/*   Created: 2025/11/12 19:00:00 by abendrih          #+#    #+#             */
+/*   Updated: 2025/11/12 20:04:31 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#ifndef UTILS_H
+# define UTILS_H
+
+/* Input validation */
+int		has_unclosed_quotes(char *line);
+char	*handle_multiline_input(char *line);
+
+#endif

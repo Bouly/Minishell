@@ -5,102 +5,50 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/05 02:30:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/12 17:03:21 by abendrih         ###   ########.fr       */
+/*   Created: 2025/11/12 19:00:00 by abendrih          #+#    #+#             */
+/*   Updated: 2025/11/12 20:04:30 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-t_token	*find_pipe(t_token *tokens)
+t_ast	*create_ast(t_node_type type, char **args)
 {
-	t_token	*key;
+	t_ast	*node;
 
-	key = tokens;
-	while (key && key->type != TOKEN_PIPE)
-	{
-		key = key->next;
-	}
-	return (key);
-}
-
-static t_ast	*create_three(t_node_type type, char **args)
-{
-	t_ast	*key;
-
-	key = malloc(sizeof(t_ast));
-	if (!key)
+	node = malloc(sizeof(t_ast));
+	if (!node)
 		return (NULL);
-	key->type = type;
-	key->args = args;
-	key->infile = NULL;
-	key->outfile = NULL;
-	key->append = 0;
-	key->heredoc_delim = NULL;
-	key->right = NULL;
-	key->left = NULL;
-	return (key);
+	node->type = type;
+	node->args = args;
+	node->infile = NULL;
+	node->outfile = NULL;
+	node->append = 0;
+	node->heredoc_delim = NULL;
+	node->right = NULL;
+	node->left = NULL;
+	return (node);
 }
 
-void	ast_free(t_ast **three)
+void	ast_free(t_ast **tree)
 {
-	if (!three || !*three)
+	if (!tree || !*tree)
 		return ;
-	if ((*three)->type == NODE_PIPE)
+	if ((*tree)->type == NODE_PIPE)
 	{
-		ast_free(&(*three)->right);
-		ast_free(&(*three)->left);
-		free(*three);
+		ast_free(&(*tree)->right);
+		ast_free(&(*tree)->left);
+		free(*tree);
 	}
 	else
 	{
-		ft_free((*three)->args);
-		if ((*three)->infile)
-			free((*three)->infile);
-		if ((*three)->outfile)
-			free((*three)->outfile);
-		if ((*three)->heredoc_delim)
-			free((*three)->heredoc_delim);
-		free(*three);
+		ft_free((*tree)->args);
+		if ((*tree)->infile)
+			free((*tree)->infile);
+		if ((*tree)->outfile)
+			free((*tree)->outfile);
+		if ((*tree)->heredoc_delim)
+			free((*tree)->heredoc_delim);
+		free(*tree);
 	}
-}
-
-static t_token	*befor_pipe(t_token **tokens)
-{
-	t_token	*key;
-	t_token	*tmp;
-
-	key = *tokens;
-	tmp = token_new(key->type, key->value);
-	key = key->next;
-	while (key && key->type != TOKEN_PIPE)
-	{
-		token_addback(&tmp, token_new(key->type, key->value));
-		key = key->next;
-	}
-	return (tmp);
-}
-
-t_ast	*parse(t_token *tokens)
-{
-	t_token	*pipe;
-	t_ast	*three;
-	t_token	*left_tokens;
-
-	pipe = find_pipe(tokens);
-	if (pipe)
-	{
-		three = create_three(NODE_PIPE, NULL);
-		left_tokens = befor_pipe(&tokens);
-		three->left = parse(left_tokens);
-		token_free(&left_tokens);
-		three->right = parse(pipe->next);
-	}
-	else
-	{
-		three = create_three(NODE_COMMAND, NULL);
-		extract_redirections(&tokens, three);
-		three->args = tokens_to_array(&tokens);
-	}
-	return (three);
 }
