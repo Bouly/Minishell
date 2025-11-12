@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 04:18:54 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/10 22:04:30 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/12 16:30:16 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ t_token	*lexer(char *line)
 			ok = handle_pipe(&i, &head);
 		else if (line[i] == '>' || line[i] == '<')
 			ok = handle_redirect(line, &i, &head);
-		else // ← Enlève le "else if (is_quote...)"
+		else
 			ok = handle_word(line, &i, &head);
 		if (ok == 0)
 			return (token_free(&head), NULL);

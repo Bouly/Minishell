@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 02:30:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/07 19:20:56 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/12 17:03:21 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ t_token	*find_pipe(t_token *tokens)
 	return (key);
 }
 
-static t_ast	*create_node(t_node_type type, char **args)
+static t_ast	*create_three(t_node_type type, char **args)
 {
 	t_ast	*key;
 
@@ -33,6 +33,10 @@ static t_ast	*create_node(t_node_type type, char **args)
 		return (NULL);
 	key->type = type;
 	key->args = args;
+	key->infile = NULL;
+	key->outfile = NULL;
+	key->append = 0;
+	key->heredoc_delim = NULL;
 	key->right = NULL;
 	key->left = NULL;
 	return (key);
@@ -51,6 +55,12 @@ void	ast_free(t_ast **three)
 	else
 	{
 		ft_free((*three)->args);
+		if ((*three)->infile)
+			free((*three)->infile);
+		if ((*three)->outfile)
+			free((*three)->outfile);
+		if ((*three)->heredoc_delim)
+			free((*three)->heredoc_delim);
 		free(*three);
 	}
 }
@@ -74,21 +84,23 @@ static t_token	*befor_pipe(t_token **tokens)
 t_ast	*parse(t_token *tokens)
 {
 	t_token	*pipe;
-	t_ast	*node;
+	t_ast	*three;
 	t_token	*left_tokens;
 
 	pipe = find_pipe(tokens);
 	if (pipe)
 	{
-		node = create_node(NODE_PIPE, NULL);
+		three = create_three(NODE_PIPE, NULL);
 		left_tokens = befor_pipe(&tokens);
-		node->left = parse(left_tokens);
+		three->left = parse(left_tokens);
 		token_free(&left_tokens);
-		node->right = parse(pipe->next);
+		three->right = parse(pipe->next);
 	}
 	else
 	{
-		node = create_node(NODE_COMMAND, tokens_to_array(&tokens));
+		three = create_three(NODE_COMMAND, NULL);
+		extract_redirections(&tokens, three);
+		three->args = tokens_to_array(&tokens);
 	}
-	return (node);
+	return (three);
 }

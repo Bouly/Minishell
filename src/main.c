@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 21:14:57 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/10 22:08:08 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/12 16:24:03 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,6 @@ int	main(int ac, char **av, char **env)
 			tmp = ft_strjoin(line, "\n");
 			line = ft_strjoin(tmp, next);
 			free(next);
-		}
-		if (!line)
-		{
-			ft_putstr_fd("exit\n", 2);
-			break ;
 		}
 		token = lexer(line);
 		if (token == NULL)
