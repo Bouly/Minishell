@@ -12,6 +12,39 @@
 
 #include "../../includes/minishell.h"
 
+static int	is_redirect_token(t_token_type type)
+{
+	return (type == TOKEN_REDIRECT_IN || type == TOKEN_REDIRECT_OUT
+		|| type == TOKEN_APPEND || type == TOKEN_HEREDOC);
+}
+
+static int	validate_syntax(t_token *tokens)
+{
+	t_token	*current;
+
+	current = tokens;
+	if (!current)
+		return (1);
+	if (current->type == TOKEN_PIPE)
+		return (ft_putstr_fd("syntax error near unexpected token `|'\n", 2), 0);
+	while (current)
+	{
+		if (current->type == TOKEN_PIPE)
+		{
+			if (!current->next || current->next->type == TOKEN_PIPE)
+				return (ft_putstr_fd("syntax error near unexpected token `|'\n", 2), 0);
+		}
+		if (is_redirect_token(current->type))
+		{
+			if (!current->next || current->next->type == TOKEN_PIPE
+				|| is_redirect_token(current->next->type))
+				return (ft_putstr_fd("syntax error near unexpected token `newline'\n", 2), 0);
+		}
+		current = current->next;
+	}
+	return (1);
+}
+
 t_token	*find_pipe(t_token *tokens)
 {
 	t_token	*key;
@@ -46,6 +79,8 @@ t_ast	*parse(t_token *tokens)
 	t_ast	*tree;
 	t_token	*left_tokens;
 
+	if (!validate_syntax(tokens))
+		return (NULL);
 	pipe = find_pipe(tokens);
 	if (pipe)
 	{

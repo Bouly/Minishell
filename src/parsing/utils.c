@@ -77,8 +77,16 @@ char	*find_command(char *cmd, char **envp)
 	char	*valid_cmd;
 	int		i;
 
+	if (ft_strchr(cmd, '/'))
+	{
+		if (access(cmd, X_OK) == 0)
+			return (ft_strdup(cmd));
+		return (NULL);
+	}
 	i = 0;
 	path = get_path_from_env(envp);
+	if (!path)
+		return (NULL);
 	dirs = ft_split(path, ':');
 	while (dirs[i])
 	{

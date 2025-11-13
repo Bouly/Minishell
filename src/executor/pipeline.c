@@ -22,31 +22,34 @@ static void	close_fd(int fd[2], int n)
 	close(fd[1]);
 }
 
-void	pipe_exec(t_ast *three, char **envp, t_ast *root)
+void	pipe_exec(t_ast *three, t_shell *shell, t_ast *root)
 {
 	int	pid;
 	int	pid2;
 	int	fd[2];
+	int	status;
 
 	pipe(fd);
 	pid = fork();
 	if (pid == 0)
 	{
 		close_fd(fd, 1);
-		mother_exec(three->left, envp, root);
+		mother_exec(three->left, shell, root);
 		ast_free(&root);
-		exit(0);
+		exit(shell->last_exit_status);
 	}
 	pid2 = fork();
 	if (pid2 == 0)
 	{
 		close_fd(fd, 0);
-		mother_exec(three->right, envp, root);
+		mother_exec(three->right, shell, root);
 		ast_free(&root);
-		exit(0);
+		exit(shell->last_exit_status);
 	}
 	close(fd[0]);
 	close(fd[1]);
 	waitpid(pid, NULL, 0);
-	waitpid(pid2, NULL, 0);
+	waitpid(pid2, &status, 0);
+	if (WIFEXITED(status))
+		shell->last_exit_status = WEXITSTATUS(status);
 }

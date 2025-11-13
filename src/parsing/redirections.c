@@ -16,6 +16,8 @@ static void	handle_input_redirect(t_token *current, t_ast *node)
 {
 	if (current->type == TOKEN_REDIRECT_IN && current->next)
 	{
+		if (node->infile)
+			free(node->infile);
 		node->infile = ft_strdup(current->next->value);
 	}
 }
@@ -24,6 +26,8 @@ static void	handle_output_redirect(t_token *current, t_ast *node)
 {
 	if (current->type == TOKEN_REDIRECT_OUT && current->next)
 	{
+		if (node->outfile)
+			free(node->outfile);
 		node->outfile = ft_strdup(current->next->value);
 		node->append = 0;
 	}
@@ -33,8 +37,20 @@ static void	handle_append_redirect(t_token *current, t_ast *node)
 {
 	if (current->type == TOKEN_APPEND && current->next)
 	{
+		if (node->outfile)
+			free(node->outfile);
 		node->outfile = ft_strdup(current->next->value);
 		node->append = 1;
+	}
+}
+
+static void	handle_heredoc_redirect(t_token *current, t_ast *node)
+{
+	if (current->type == TOKEN_HEREDOC && current->next)
+	{
+		if (node->heredoc_delim)
+			free(node->heredoc_delim);
+		node->heredoc_delim = ft_strdup(current->next->value);
 	}
 }
 
@@ -51,6 +67,8 @@ void	extract_redirections(t_token **tokens, t_ast *node)
 			handle_output_redirect(current, node);
 		else if (current->type == TOKEN_APPEND)
 			handle_append_redirect(current, node);
+		else if (current->type == TOKEN_HEREDOC)
+			handle_heredoc_redirect(current, node);
 		current = current->next;
 	}
 }

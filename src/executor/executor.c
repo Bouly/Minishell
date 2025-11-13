@@ -12,6 +12,34 @@
 
 #include "../../includes/minishell.h"
 
+static void	setup_heredoc(char *delimiter)
+{
+	char	*line;
+	int		pipe_fd[2];
+
+	if (pipe(pipe_fd) == -1)
+	{
+		perror("pipe");
+		exit(1);
+	}
+	while (1)
+	{
+		line = readline("> ");
+		if (!line || (ft_strncmp(line, delimiter, ft_strlen(delimiter)) == 0
+				&& ft_strlen(line) == ft_strlen(delimiter)))
+		{
+			free(line);
+			break ;
+		}
+		write(pipe_fd[1], line, ft_strlen(line));
+		write(pipe_fd[1], "\n", 1);
+		free(line);
+	}
+	close(pipe_fd[1]);
+	dup2(pipe_fd[0], STDIN_FILENO);
+	close(pipe_fd[0]);
+}
+
 static void	setup_infile(char *infile)
 {
 	int	fd;
@@ -43,37 +71,43 @@ static void	setup_outfile(char *outfile, int append)
 	close(fd);
 }
 
-void	cmd_exec(t_ast *node, char **envp)
+void	cmd_exec(t_ast *node, t_shell *shell)
 {
 	char	*path;
 	int		id;
+	int		status;
 
-	path = find_command(node->args[0], envp);
+	path = find_command(node->args[0], shell->env);
 	if (!path)
 	{
 		ft_putstr_fd("command not found\n", 2);
+		shell->last_exit_status = 127;
 		return ;
 	}
 	id = fork();
 	if (id == 0)
 	{
-		if (node->infile)
+		if (node->heredoc_delim)
+			setup_heredoc(node->heredoc_delim);
+		else if (node->infile)
 			setup_infile(node->infile);
 		if (node->outfile)
 			setup_outfile(node->outfile, node->append);
-		execve(path, node->args, envp);
+		execve(path, node->args, shell->env);
 		perror("execve");
 		free(path);
 		exit(1);
 	}
 	free(path);
-	wait(NULL);
+	waitpid(id, &status, 0);
+	if (WIFEXITED(status))
+		shell->last_exit_status = WEXITSTATUS(status);
 }
 
-void	mother_exec(t_ast *three, char **envp, t_ast *root)
+void	mother_exec(t_ast *three, t_shell *shell, t_ast *root)
 {
 	if (three->type == NODE_PIPE)
-		pipe_exec(three, envp, root);
+		pipe_exec(three, shell, root);
 	else if (three->type == NODE_COMMAND)
-		cmd_exec(three, envp);
+		cmd_exec(three, shell);
 }

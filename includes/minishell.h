@@ -14,10 +14,23 @@
 # define MINISHELL_H
 
 # include "../Libft/libft.h"
-# include "builtins.h"
-# include "executor.h"
 # include "lexer.h"
 # include "parser.h"
+
+typedef struct s_shell
+{
+	char	**env;
+	int		last_exit_status;
+}	t_shell;
+
+/* Shell initialization */
+t_shell	*shell_init(char **envp);
+void	shell_free(t_shell *shell);
+char	**copy_env(char **envp);
+char	*get_env_value(t_shell *shell, char *key);
+
+# include "builtins.h"
+# include "executor.h"
 # include "signals.h"
 # include "utils.h"
 
