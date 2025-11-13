@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 21:14:57 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/12 20:13:26 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/13 20:09:16 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,9 @@ int	main(int ac, char **av, char **env)
 		}
 		line = handle_multiline_input(line);
 		token = lexer(line);
-		if (token == NULL)
-		{
-			free(line);
-			continue ;
-		}
 		free(line);
+		if (token == NULL)
+			continue ;
 		three = parse(token);
 		token_free(&token);
 		mother_exec(three, env, three);
