@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 04:18:54 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/12 16:30:16 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/13 20:11:06 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,6 @@ static char	*accumulate_adjacent_parts(char *line, int *i)
 			part = extract_quoted_word(line, i, line[*i]);
 			if (!part)
 				return (free(result), NULL);
-			result = ft_strjoin(result, part);
-			free(part);
 		}
 		else
 		{
@@ -71,9 +69,9 @@ static char	*accumulate_adjacent_parts(char *line, int *i)
 				&& !is_quote(line[*i]))
 				(*i)++;
 			part = ft_substr(line, start, *i - start);
-			result = ft_strjoin(result, part);
-			free(part);
 		}
+		result = ft_strjoin(result, part);
+		free(part);
 	}
 	return (result);
 }
