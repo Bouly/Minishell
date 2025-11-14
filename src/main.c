@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aboulahd <aboulahd@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 21:14:57 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/14 01:52:35 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/14 02:41:33 by aboulahd         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,13 @@ int	main(int ac, char **av, char **env)
 	char	*line;
 	t_token	*token;
 	t_ast	*three;
+	t_shell	shell;
+	char	**envp;
 
 	(void)ac;
 	(void)av;
+	shell.env = env_init(env);
+	shell.exit_status = 0;
 	while (1)
 	{
 		line = readline("\033[1;91mEl Cancer > \033[0m");
@@ -36,7 +40,10 @@ int	main(int ac, char **av, char **env)
 			continue ;
 		three = parse(token);
 		token_free(&token);
-		mother_exec(three, env, three);
+		envp = env_to_array(shell.env);
+		mother_exec(three, envp, three, &shell);
+		ft_free(envp);
 		ast_free(&three);
 	}
+	env_free(shell.env);
 }
