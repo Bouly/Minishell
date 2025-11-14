@@ -22,7 +22,7 @@ static void	close_fd(int fd[2], int n)
 	close(fd[1]);
 }
 
-void	pipe_exec(t_ast *three, char **envp, t_ast *root)
+void	pipe_exec(t_ast *three, char **envp, t_ast *root, t_shell *shell)
 {
 	int	pid;
 	int	pid2;
@@ -33,7 +33,7 @@ void	pipe_exec(t_ast *three, char **envp, t_ast *root)
 	if (pid == 0)
 	{
 		close_fd(fd, 1);
-		mother_exec(three->left, envp, root);
+		mother_exec(three->left, envp, root, shell);
 		ast_free(&root);
 		exit(0);
 	}
@@ -41,7 +41,7 @@ void	pipe_exec(t_ast *three, char **envp, t_ast *root)
 	if (pid2 == 0)
 	{
 		close_fd(fd, 0);
-		mother_exec(three->right, envp, root);
+		mother_exec(three->right, envp, root, shell);
 		ast_free(&root);
 		exit(0);
 	}

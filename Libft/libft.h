@@ -103,6 +103,7 @@ char					*ft_strndup(char *src, size_t n);
 char					*ft_strchr(char *s, int c);
 char					*ft_strrchr(const char *s, int c);
 int						ft_strncmp(const char *s1, const char *s2, size_t n);
+int						ft_strcmp(const char *s1, const char *s2);
 char					*ft_strnstr(const char *big, char *little, size_t len);
 char					**ft_split(const char *s, char c);
 char					*ft_substr(char *s, int start, size_t len);
