@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 19:00:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/12 20:13:22 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/14 01:56:30 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ char	*handle_multiline_input(char *line)
 {
 	char	*next;
 	char	*tmp;
-	char	*old_line;
 
 	while (has_unclosed_quotes(line))
 	{
@@ -45,10 +44,7 @@ char	*handle_multiline_input(char *line)
 			return (line);
 		add_history(next);
 		tmp = ft_strjoin(line, "\n");
-		old_line = line;
 		line = ft_strjoin(tmp, next);
-		free(old_line);
-		free(tmp);
 		free(next);
 	}
 	return (line);
