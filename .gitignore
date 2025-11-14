@@ -1,2 +1,35 @@
 .vscode
+<<<<<<< Updated upstream
 *.o
+=======
+*.o
+*.a
+minishell
+obj/
+
+Tu prends les éléments qui touchent au cœur du système que tu as construit :
+
+🔴 URGENT : Corrections des bugs critiques
+
+Fixer add_history(NULL) dans main.c
+Fixer find_command() (PATH NULL, fuite mémoire tmp, chemins absolus/relatifs)
+Fixer tokens_to_array() (ne pas modifier la liste)
+⏱️ Temps estimé : 1-2h
+🟡 Expansion des variables d'environnement
+
+Expansion de $VAR dans le lexer/parser
+Gestion du $? (exit status)
+Stockage de l'exit status global
+⏱️ Temps estimé : 3-4h
+🟡 Builtins complexes (export, unset)
+
+export VAR=value (création/modification env)
+export sans args (afficher toutes les variables)
+unset VAR (suppression de variables)
+⏱️ Temps estimé : 2-3h
+🟡 Heredocs (<<)
+
+Implémentation du heredoc dans l'executor
+Gestion du délimiteur
+⏱️ Temps estimé : 2-3h
+>>>>>>> Stashed changes

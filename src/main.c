@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 21:14:57 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/13 20:09:16 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/14 01:52:35 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,12 @@ int	main(int ac, char **av, char **env)
 	while (1)
 	{
 		line = readline("\033[1;91mEl Cancer > \033[0m");
-		add_history(line);
 		if (!line)
 		{
 			ft_putstr_fd("exit\n", 2);
 			break ;
 		}
+		add_history(line);
 		line = handle_multiline_input(line);
 		token = lexer(line);
 		free(line);

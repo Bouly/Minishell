@@ -12,7 +12,7 @@
         "ignore": true,
         "minishell": true,
         "obj": true,
-        "**/.gitignore": false
+        "**/.gitignore": true
     },
     "explorerExclude.backup": {},
     "files.associations": {
