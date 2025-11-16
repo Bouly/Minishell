@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 19:00:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/16 16:32:50 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/16 16:59:22 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,25 +31,24 @@ char	**tokens_to_array(t_token **lst)
 {
 	int		i;
 	char	**args;
+	t_token	*key;
 
+	key = *lst;
 	i = 0;
 	args = malloc(sizeof(char *) * (count_tokens(lst) + 1));
 	if (!args)
 		return (NULL);
-	while (*lst)
+	while (key)
 	{
-		if ((*lst)->type != TOKEN_WORD
-			&& (*lst)->type != TOKEN_WORD_DOUBLE_QUOTED
-			&& (*lst)->type != TOKEN_WORD_SINGLE_QUOTED)
+		if (key->type != TOKEN_WORD && key->type != TOKEN_WORD_DOUBLE_QUOTED
+			&& key->type != TOKEN_WORD_SINGLE_QUOTED)
 		{
 			args[i] = NULL;
-			if ((*lst)->next)
-				*lst = (*lst)->next;
 			return (args);
 		}
-		args[i] = ft_strdup((*lst)->value);
+		args[i] = ft_strdup(key->value);
 		i++;
-		*lst = (*lst)->next;
+		key = key->next;
 	}
 	args[i] = NULL;
 	return (args);
