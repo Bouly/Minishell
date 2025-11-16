@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 19:00:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/16 16:59:22 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/16 17:47:41 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,31 +72,25 @@ char	*find_command(char *cmd, char **envp)
 {
 	char	**dirs;
 	char	*tmp;
-	char	*path;
 	char	*valid_cmd;
 	int		i;
 
-	i = 0;
 	if (ft_strchr(cmd, '/'))
 	{
 		if (access(cmd, X_OK) == 0)
 			return (ft_strdup(cmd));
 		return (NULL);
 	}
-	path = get_path_from_env(envp);
-	dirs = ft_split(path, ':');
+	dirs = ft_split(get_path_from_env(envp), ':');
 	if (!dirs)
 		return (NULL);
+	i = 0;
 	while (dirs[i])
 	{
 		tmp = ft_strjoin(dirs[i], "/");
 		valid_cmd = ft_strjoin(tmp, cmd);
 		if (access(valid_cmd, X_OK) == 0)
-		{
-			ft_free_2(&dirs[i + 1]);
-			free(dirs);
-			return (valid_cmd);
-		}
+			return (ft_free_2(&dirs[i + 1]), free(dirs), valid_cmd);
 		free(valid_cmd);
 		i++;
 	}

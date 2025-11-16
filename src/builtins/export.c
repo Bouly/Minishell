@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 01:00:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/14 01:00:00 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/16 17:34:35 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,7 @@ int	builtin_export(char **args, t_env **env)
 	int		i;
 
 	if (!args[1])
-	{
-		print_export(*env);
-		return (0);
-	}
+		return (print_export(*env), 0);
 	i = 1;
 	while (args[i])
 	{
