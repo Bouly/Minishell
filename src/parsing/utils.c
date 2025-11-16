@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 19:00:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/14 02:20:21 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/16 16:32:50 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,12 @@ char	*find_command(char *cmd, char **envp)
 	int		i;
 
 	i = 0;
+	if (ft_strchr(cmd, '/'))
+	{
+		if (access(cmd, X_OK) == 0)
+			return (ft_strdup(cmd));
+		return (NULL);
+	}
 	path = get_path_from_env(envp);
 	dirs = ft_split(path, ':');
 	if (!dirs)
