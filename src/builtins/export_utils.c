@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 01:00:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/16 17:35:43 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/17 01:09:50 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,12 +90,14 @@ char	**env_to_array(t_env *env)
 	tmp = env;
 	while (tmp && ++i)
 		tmp = tmp->next;
-	if (!((arr = malloc(sizeof(char *) * (i + 1)))))
+	arr = malloc(sizeof(char *) * (i + 1));
+	if (!arr)
 		return (NULL);
 	i = 0;
 	while (env)
 	{
-		if (!(arr[i] = create_env_string(env)))
+		arr[i] = create_env_string(env);
+		if (!arr[i])
 		{
 			while (i-- > 0)
 				free(arr[i]);

@@ -6,15 +6,11 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 01:00:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/14 01:00:00 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/17 00:12:47 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-#ifndef PATH_MAX
-# define PATH_MAX 4096
-#endif
 
 int	builtin_pwd(char **args)
 {

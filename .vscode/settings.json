@@ -14,7 +14,9 @@
         "**/ignore": true,
         "ignore": true,
         "**/obj": true,
-        "obj": true
+        "obj": true,
+        "**/minishell": true,
+        "minishell": true
     },
     "explorerExclude.backup": {}
 }
