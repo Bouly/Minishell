@@ -51,6 +51,8 @@ Notre implémentation reproduit les fonctionnalités essentielles de bash avec :
 - Une architecture propre et modulaire
 - Une gestion mémoire rigoureuse (0 leaks)
 - Un code conforme à la Norminette
+<img width="200" height="200" alt="image" src="https://github.com/user-attachments/assets/7426a7b7-eb31-47ea-8e95-7163f7b00913" />
+
 
 ---
 
