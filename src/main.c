@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 21:14:57 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/17 01:11:12 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/19 19:20:48 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ int	main(int ac, char **av, char **env)
 			break ;
 		}
 		add_history(line);
+		if (ft_strcmp(line, "$?") == 0)
+			printf("%d\n", shell.exit_status);
 		line = handle_multiline_input(line);
 		token = lexer(line);
 		free(line);

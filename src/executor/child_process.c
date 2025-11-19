@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 17:30:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/16 17:28:59 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/19 20:43:12 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,5 +53,6 @@ void	child_exec(t_ast *node, char *path, char **envp)
 	execve(path, node->args, envp);
 	perror("execve");
 	free(path);
+	ft_free(envp);
 	exit(1);
 }

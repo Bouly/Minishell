@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 17:10:10 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/16 18:13:10 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/19 20:47:12 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ void	pipe_exec(t_ast *three, char **envp, t_ast *root, t_shell *shell)
 		close_fd(fd, 1);
 		mother_exec(three->left, envp, root, shell);
 		ast_free(&root);
+		ft_free(envp);
+		env_free(shell->env);
 		exit(0);
 	}
 	pid2 = fork();
@@ -46,6 +48,8 @@ void	pipe_exec(t_ast *three, char **envp, t_ast *root, t_shell *shell)
 		close_fd(fd, 0);
 		mother_exec(three->right, envp, root, shell);
 		ast_free(&root);
+		ft_free(envp);
+		env_free(shell->env);
 		exit(0);
 	}
 	close(fd[0]);
