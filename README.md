@@ -69,6 +69,9 @@ Notre implémentation reproduit les fonctionnalités essentielles de bash avec :
 - **Chemins absolus** : `/bin/echo`, `./script`, etc.
 - **Multiline input** : Gestion des quotes non fermées
 
+<img width="200" height="200" alt="image" src="https://github.com/user-attachments/assets/56cc9a6b-9861-4193-b6a5-64228625c453" />
+
+
 ---
 
 ## Utilisation
@@ -117,6 +120,8 @@ env | grep PATH
 exit 0
 ```
 
+<img width="200" height="200" alt="image" src="https://github.com/user-attachments/assets/8c93f4da-72e2-4800-99fc-4dfa1f1dd08f" />
+
 ---
 
 ### Points clés de l'architecture
@@ -124,6 +129,8 @@ exit 0
 1. **Lexer avec expansion** : Les variables sont expand pendant la tokenisation
 2. **AST récursif** : Les pipes créent un arbre binaire naturellement récursif
 3. **Builtins dans le parent** : Pour modifier l'état du shell
+
+<img width="200" alt="image" src="https://github.com/user-attachments/assets/3cf91bdb-25e3-480f-9533-3ab7e1ee3588" />
 
 ---
 
@@ -136,6 +143,8 @@ Ce projet nous a permis de développer :
 - Implémentation de **structures de données** complexes (AST, linked lists)
 - Gestion des **signaux** et des **file descriptors**
 - Travail en **binôme** avec répartition des tâches
+
+<img width="300" alt="image" src="https://github.com/user-attachments/assets/2e35b6bf-c85d-41a6-9e63-23fecc3cf53c" />
 
 ---
 
