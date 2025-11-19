@@ -38,4 +38,7 @@ void					exec_builtin_with_redir(t_ast *node, t_shell *shell);
 /* child_process.c - Child process execution */
 void					child_exec(t_ast *node, char *path, char **envp);
 
+/* Utils */
+int						get_exit_status(int status);
+
 #endif

@@ -47,6 +47,7 @@ static void	setup_child_output(t_ast *node)
 
 void	child_exec(t_ast *node, char *path, char **envp)
 {
+	setup_signals_exec();
 	setup_child_input(node);
 	setup_child_output(node);
 	execve(path, node->args, envp);

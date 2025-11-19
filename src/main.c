@@ -24,6 +24,8 @@ int	main(int ac, char **av, char **env)
 	(void)av;
 	shell.env = env_init(env);
 	shell.exit_status = 0;
+	setup_signals_interactive();
+	disable_ctrl_chars_display();
 	while (1)
 	{
 		line = readline("\033[1;91mEl Cancer > \033[0m");

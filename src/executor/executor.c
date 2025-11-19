@@ -6,16 +6,30 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:29:04 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/16 17:28:59 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/19 16:10:00 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+int	get_exit_status(int status)
+{
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	else if (WIFSIGNALED(status))
+	{
+		if (WTERMSIG(status) == SIGQUIT)
+			ft_putstr_fd("Quit (core dumped)\n", 2);
+		return (128 + WTERMSIG(status));
+	}
+	return (0);
+}
+
 void	cmd_exec(t_ast *node, char **envp, t_shell *shell)
 {
 	char	*path;
 	int		id;
+	int		status;
 
 	if (is_builtin(node->args[0]))
 		return (exec_builtin_with_redir(node, shell));
@@ -30,8 +44,8 @@ void	cmd_exec(t_ast *node, char **envp, t_shell *shell)
 	if (id == 0)
 		child_exec(node, path, envp);
 	free(path);
-	wait(NULL);
-	shell->exit_status = 0;
+	waitpid(id, &status, 0);
+	shell->exit_status = get_exit_status(status);
 }
 
 void	mother_exec(t_ast *three, char **envp, t_ast *root, t_shell *shell)
