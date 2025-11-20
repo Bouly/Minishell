@@ -1,6 +1,6 @@
 Brouillon
 
-# Minishell - aka MiniMerde
+# Minishell 
 
 > *Un interpréteur de commandes simplifié, reproduisant le comportement de bash*
 
@@ -79,7 +79,7 @@ Notre implémentation reproduit les fonctionnalités essentielles de bash avec :
 ### Installation
 
 ```bash
-git clone caca.git
+git clone https://github.com/AnisseBendrihem/Minishell.git
 cd minishell
 make
 ```

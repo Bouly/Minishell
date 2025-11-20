@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 01:00:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/16 17:33:44 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/20 04:29:43 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,6 @@ int	exec_builtin(char **args, t_shell *shell)
 	if (ft_strcmp(args[0], "env") == 0)
 		return (builtin_env(args, shell->env));
 	if (ft_strcmp(args[0], "exit") == 0)
-		return (builtin_exit(args, shell));
+		builtin_exit(args, shell);
 	return (1);
 }

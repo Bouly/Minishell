@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 21:14:57 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/19 19:20:48 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/20 04:33:23 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,14 @@ int	main(int ac, char **av, char **env)
 {
 	char	*line;
 	t_token	*token;
-	t_ast	*three;
 	t_shell	shell;
-	char	**envp;
 
 	(void)ac;
 	(void)av;
 	shell.env = env_init(env);
 	shell.exit_status = 0;
+	shell.ast = NULL;
+	shell.envp = NULL;
 	setup_signals_interactive();
 	disable_ctrl_chars_display();
 	while (1)
@@ -42,12 +42,12 @@ int	main(int ac, char **av, char **env)
 		free(line);
 		if (token == NULL)
 			continue ;
-		three = parse(token);
+		shell.ast = parse(token);
 		token_free(&token);
-		envp = env_to_array(shell.env);
-		mother_exec(three, envp, three, &shell);
-		ft_free(envp);
-		ast_free(&three);
+		shell.envp = env_to_array(shell.env);
+		mother_exec(shell.ast, shell.envp, shell.ast, &shell);
+		ft_free(shell.envp);
+		ast_free(&shell.ast);
 	}
 	env_free(shell.env);
 }

@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 01:00:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/14 01:00:00 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/20 04:29:48 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,28 +30,32 @@ static int	is_numeric(const char *str)
 	return (1);
 }
 
+void	free_and_exit(t_shell *shell)
+{
+	ast_free(&shell->ast);
+	ft_free(shell->envp);
+	env_free(shell->env);
+	exit(shell->exit_status);
+}
+
 int	builtin_exit(char **args, t_shell *shell)
 {
-	int	exit_code;
-
 	ft_putstr_fd("exit\n", 2);
 	if (args[1])
 	{
 		if (!is_numeric(args[1]))
 		{
 			ft_putstr_fd("exit: numeric argument required\n", 2);
-			env_free(shell->env);
-			exit(255);
+			shell->exit_status = 255;
+			free_and_exit(shell);
 		}
 		if (args[2])
 		{
 			ft_putstr_fd("exit: too many arguments\n", 2);
 			return (1);
 		}
-		exit_code = ft_atoi(args[1]);
-		env_free(shell->env);
-		exit(exit_code & 255);
+		shell->exit_status = ft_atoi(args[1]) & 255;
 	}
-	env_free(shell->env);
-	exit(shell->exit_status);
+	free_and_exit(shell);
+	return (0);
 }

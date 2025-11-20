@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 01:54:55 by aboulahd          #+#    #+#             */
-/*   Updated: 2025/11/17 01:06:55 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/20 04:29:32 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 # ifndef PATH_MAX
 #  define PATH_MAX 4096
 # endif
+
+typedef struct s_ast t_ast; // ← Ajoute cette ligne (forward declaration)
 
 typedef struct s_env
 {
@@ -28,8 +30,9 @@ typedef struct s_shell
 {
 	t_env			*env;
 	int				exit_status;
+	t_ast			*ast;
+	char			**envp;
 }					t_shell;
-
 // Env
 t_env				*env_init(char **envp);
 void				env_free(t_env *env);
