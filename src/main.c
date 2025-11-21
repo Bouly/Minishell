@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 21:14:57 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/20 04:33:23 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/21 05:58:09 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,11 @@ int	main(int ac, char **av, char **env)
 		if (token == NULL)
 			continue ;
 		shell.ast = parse(token);
+		if (!shell.ast)
+		{
+			token_free(&token);
+			continue ;
+		}
 		token_free(&token);
 		shell.envp = env_to_array(shell.env);
 		mother_exec(shell.ast, shell.envp, shell.ast, &shell);

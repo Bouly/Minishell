@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 02:30:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/12 20:04:30 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/21 05:56:27 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,21 @@ t_ast	*parse(t_token *tokens)
 	{
 		tree = create_ast(NODE_PIPE, NULL);
 		left_tokens = before_pipe(&tokens);
+		if (left_tokens->type == TOKEN_PIPE)
+		{
+			ft_putstr_fd("bash: syntax error near unexpected token `||'\n", 2);
+			token_free(&left_tokens);
+			free(tree);
+			return (NULL);
+		}
 		tree->left = parse(left_tokens);
 		token_free(&left_tokens);
+		if (!pipe->next || pipe->next->type == TOKEN_PIPE)
+		{
+			ft_putstr_fd("bash: syntax error near unexpected token `||'\n", 2);
+			ast_free(&tree);
+			return (NULL);
+		}
 		tree->right = parse(pipe->next);
 	}
 	else
