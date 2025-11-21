@@ -24,7 +24,7 @@ t_ast	*create_ast(t_node_type type, char **args)
 	node->infile = NULL;
 	node->outfile = NULL;
 	node->append = 0;
-	node->heredoc_delim = NULL;
+	node->heredocs = NULL;
 	node->right = NULL;
 	node->left = NULL;
 	return (node);
@@ -47,8 +47,8 @@ void	ast_free(t_ast **tree)
 			free((*tree)->infile);
 		if ((*tree)->outfile)
 			free((*tree)->outfile);
-		if ((*tree)->heredoc_delim)
-			free((*tree)->heredoc_delim);
+		if ((*tree)->heredocs)
+			heredoc_free(&(*tree)->heredocs);
 		free(*tree);
 	}
 }

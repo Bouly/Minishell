@@ -19,6 +19,13 @@ typedef enum e_node_type
 	NODE_PIPE,
 }					t_node_type;
 
+typedef struct s_heredoc
+{
+	char				*delim;
+	int					fd;
+	struct s_heredoc	*next;
+}					t_heredoc;
+
 typedef struct s_ast
 {
 	t_node_type		type;
@@ -26,7 +33,7 @@ typedef struct s_ast
 	char			*infile;
 	char			*outfile;
 	int				append;
-	char			*heredoc_delim;
+	t_heredoc		*heredocs;
 	struct s_ast	*left;
 	struct s_ast	*right;
 }					t_ast;
@@ -34,6 +41,15 @@ typedef struct s_ast
 /* AST management */
 t_ast				*create_ast(t_node_type type, char **args);
 void				ast_free(t_ast **tree);
+
+/* Heredoc management */
+t_heredoc			*heredoc_new(char *delim);
+void				heredoc_addback(t_heredoc **lst, t_heredoc *new);
+void				heredoc_free(t_heredoc **lst);
+void				heredoc_close_all_fds(t_heredoc *heredocs);
+void				close_all_ast_heredocs(t_ast *ast);
+int					process_heredocs(t_heredoc *heredocs, t_shell *shell);
+int					process_all_heredocs(t_ast *ast, t_shell *shell);
 
 /* Parser */
 t_ast				*parse(t_token *tokens);

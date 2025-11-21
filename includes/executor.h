@@ -18,7 +18,8 @@ typedef struct s_ast	t_ast;
 typedef struct s_shell	t_shell;
 
 /* executor.c - Main execution functions */
-void					cmd_exec(t_ast *node, char **envp, t_shell *shell);
+void					cmd_exec(t_ast *node, char **envp, t_shell *shell,
+							t_ast *root);
 void					mother_exec(t_ast *three, char **envp, t_ast *root,
 							t_shell *shell);
 
@@ -33,10 +34,12 @@ int						setup_output_redirection(t_ast *node,
 int						setup_builtin_redirections(t_ast *node,
 							int saved_fd[2]);
 void					restore_redirections(int saved_fd[2]);
-void					exec_builtin_with_redir(t_ast *node, t_shell *shell);
+void					exec_builtin_with_redir(t_ast *node, t_shell *shell,
+							t_ast *root);
 
 /* child_process.c - Child process execution */
-void					child_exec(t_ast *node, char *path, char **envp);
+void					child_exec(t_ast *node, char *path, char **envp,
+							t_ast *root);
 
 /* Utils */
 int						get_exit_status(int status);

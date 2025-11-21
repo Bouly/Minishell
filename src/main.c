@@ -21,12 +21,12 @@ int	main(int ac, char **av, char **env)
 	
 	(void)ac;
 	(void)av;
-	if (isatty(STDIN_FILENO) == 0)
-	{
-		write(2, "\e[1;38;2;mSoit plus sympa sur tes tests ", 41);
-		write(2, "stp et suis plutot la correction\n", 34);
-		return (1);
-	}
+	// if (isatty(STDIN_FILENO) == 0)
+	// {
+	// 	write(2, "\e[1;38;2;mSoit plus sympa sur tes tests ", 41);
+	// 	write(2, "stp et suis plutot la correction\n", 34);
+	// 	return (1);
+	// }
 	shell.env = env_init(env);
 	shell.exit_status = 0;
 	shell.ast = NULL;
@@ -57,6 +57,13 @@ int	main(int ac, char **av, char **env)
 			continue ;
 		}
 		token_free(&token);
+		if (process_all_heredocs(shell.ast, &shell) == -1)
+		{
+			ft_putstr_fd("heredoc error\n", 2);
+			shell.exit_status = 1;
+			ast_free(&shell.ast);
+			continue ;
+		}
 		shell.envp = env_to_array(shell.env);
 		mother_exec(shell.ast, shell.envp, shell.ast, &shell);
 		ft_free(shell.envp);

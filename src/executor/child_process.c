@@ -12,10 +12,30 @@
 
 #include "../../includes/minishell.h"
 
+static t_heredoc	*get_last_heredoc(t_heredoc *heredocs)
+{
+	t_heredoc	*last;
+
+	if (!heredocs)
+		return (NULL);
+	last = heredocs;
+	while (last->next)
+		last = last->next;
+	return (last);
+}
+
 static void	setup_child_input(t_ast *node)
 {
-	int	fd;
+	int			fd;
+	t_heredoc	*last_heredoc;
 
+	last_heredoc = get_last_heredoc(node->heredocs);
+	if (last_heredoc && last_heredoc->fd != -1)
+	{
+		dup2(last_heredoc->fd, STDIN_FILENO);
+		heredoc_close_all_fds(node->heredocs);
+		return ;
+	}
 	if (!node->infile)
 		return ;
 	fd = open(node->infile, O_RDONLY);
@@ -45,11 +65,12 @@ static void	setup_child_output(t_ast *node)
 	}
 }
 
-void	child_exec(t_ast *node, char *path, char **envp)
+void	child_exec(t_ast *node, char *path, char **envp, t_ast *root)
 {
 	setup_signals_exec();
 	setup_child_input(node);
 	setup_child_output(node);
+	close_all_ast_heredocs(root);
 	execve(path, node->args, envp);
 	perror("execve");
 	free(path);

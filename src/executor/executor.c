@@ -25,7 +25,7 @@ int	get_exit_status(int status)
 	return (0);
 }
 
-void	cmd_exec(t_ast *node, char **envp, t_shell *shell)
+void	cmd_exec(t_ast *node, char **envp, t_shell *shell, t_ast *root)
 {
 	char	*path;
 	int		id;
@@ -57,7 +57,7 @@ void	cmd_exec(t_ast *node, char **envp, t_shell *shell)
 		return ;
 	}
 	if (is_builtin(node->args[0]))
-		return (exec_builtin_with_redir(node, shell));
+		return (exec_builtin_with_redir(node, shell, root));
 	path = find_command(node->args[0], envp);
 	if (!path)
 	{
@@ -68,7 +68,7 @@ void	cmd_exec(t_ast *node, char **envp, t_shell *shell)
 	setup_signals_child();
 	id = fork();
 	if (id == 0)
-		child_exec(node, path, envp);
+		child_exec(node, path, envp, root);
 	free(path);
 	waitpid(id, &status, 0);
 	setup_signals_interactive();
@@ -80,5 +80,5 @@ void	mother_exec(t_ast *three, char **envp, t_ast *root, t_shell *shell)
 	if (three->type == NODE_PIPE)
 		pipe_exec(three, envp, root, shell);
 	else if (three->type == NODE_COMMAND)
-		cmd_exec(three, envp, shell);
+		cmd_exec(three, envp, shell, root);
 }
