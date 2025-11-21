@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 19:00:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/16 17:47:41 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/21 02:28:07 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,42 @@ static int	count_tokens(t_token **lst)
 	key = *lst;
 	while (key)
 	{
+		if (key->type == TOKEN_WORD || key->type == TOKEN_WORD_DOUBLE_QUOTED
+			|| key->type == TOKEN_WORD_SINGLE_QUOTED)
+		{
+			i++;
+		}
 		key = key->next;
-		i++;
 	}
 	return (i);
 }
+
+// char	**tokens_to_array(t_token **lst)
+// {
+// 	int		i;
+// 	char	**args;
+// 	t_token	*key;
+
+// 	key = *lst;
+// 	i = 0;
+// 	args = malloc(sizeof(char *) * (count_tokens(lst) + 1));
+// 	if (!args)
+// 		return (NULL);
+// 	while (key)
+// 	{
+// 		if (key->type != TOKEN_WORD && key->type != TOKEN_WORD_DOUBLE_QUOTED
+// 			&& key->type != TOKEN_WORD_SINGLE_QUOTED)
+// 		{
+// 			args[i] = NULL;
+// 			return (args);
+// 		}
+// 		args[i] = ft_strdup(key->value);
+// 		i++;
+// 		key = key->next;
+// 	}
+// 	args[i] = NULL;
+// 	return (args);
+// }
 
 char	**tokens_to_array(t_token **lst)
 {
@@ -40,12 +71,19 @@ char	**tokens_to_array(t_token **lst)
 		return (NULL);
 	while (key)
 	{
-		if (key->type != TOKEN_WORD && key->type != TOKEN_WORD_DOUBLE_QUOTED
-			&& key->type != TOKEN_WORD_SINGLE_QUOTED)
+		// 1. Si c'est un PIPE, on stop
+		if (key->type == TOKEN_PIPE)
+			break ;
+		// 2. Si c'est une REDIRECTION, on saute 2 tokens
+		if (key->type == TOKEN_REDIRECT_IN || key->type == TOKEN_REDIRECT_OUT
+			|| key->type == TOKEN_APPEND || key->type == TOKEN_HEREDOC)
 		{
-			args[i] = NULL;
-			return (args);
+			key = key->next; // Saute la redirection
+			if (key)
+				key = key->next; // Saute le fichier
+			continue ;
 		}
+		// 3. Sinon c'est un WORD, on copie
 		args[i] = ft_strdup(key->value);
 		i++;
 		key = key->next;
@@ -53,7 +91,6 @@ char	**tokens_to_array(t_token **lst)
 	args[i] = NULL;
 	return (args);
 }
-
 char	*get_path_from_env(char **envp)
 {
 	int	i;

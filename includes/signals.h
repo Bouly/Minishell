@@ -6,18 +6,18 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 10:00:22 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/19 15:52:00 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/21 00:10:20 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SIGNALS_H
 # define SIGNALS_H
 
+# include <readline/readline.h>
 # include <signal.h>
 # include <stdio.h>
-# include <readline/readline.h>
-# include <unistd.h>
 # include <termios.h>
+# include <unistd.h>
 
 /* Signal handlers */
 void	handle_sigint(int sig);
