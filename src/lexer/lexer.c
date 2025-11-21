@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 04:18:54 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/13 20:11:06 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/21 18:59:41 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,24 +76,34 @@ static char	*accumulate_adjacent_parts(char *line, int *i)
 	return (result);
 }
 
-static int	handle_word(char *line, int *i, t_token **head)
+static int	handle_word(char *line, int *i, t_token **head, t_shell *shell)
 {
-	char	*word;
+	char			*word;
+	char			*expanded;
+	t_token_type	type;
 
+	type = TOKEN_WORD;
+	if (line[*i] == '\'')
+		type = TOKEN_WORD_SINGLE_QUOTED;
+	else if (line[*i] == '"')
+		type = TOKEN_WORD_DOUBLE_QUOTED;
 	word = accumulate_adjacent_parts(line, i);
-	if (word == NULL)
-		return (0);
-	if (word[0] == '\0')
+	if (!word || word[0] == '\0')
 	{
 		free(word);
 		return (1);
 	}
-	token_addback(head, token_new(TOKEN_WORD, word));
+	if (type == TOKEN_WORD_SINGLE_QUOTED)
+		expanded = ft_strdup(word);
+	else
+		expanded = expand_variables(word, shell->env, shell->exit_status);
 	free(word);
+	token_addback(head, token_new(type, expanded));
+	free(expanded);
 	return (1);
 }
 
-t_token	*lexer(char *line)
+t_token	*lexer(char *line, t_shell *shell)
 {
 	t_token	*head;
 	int		i;
@@ -112,7 +122,7 @@ t_token	*lexer(char *line)
 		else if (line[i] == '>' || line[i] == '<')
 			ok = handle_redirect(line, &i, &head);
 		else
-			ok = handle_word(line, &i, &head);
+			ok = handle_word(line, &i, &head, shell);
 		if (ok == 0)
 			return (token_free(&head), NULL);
 	}

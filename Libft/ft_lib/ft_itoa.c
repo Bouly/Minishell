@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:04:56 by abendrih          #+#    #+#             */
-/*   Updated: 2025/07/28 02:12:09 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/21 18:58:39 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ char	*ft_itoa(int n)
 	long	nb;
 
 	len = break_num(n);
-	recip = malloc(sizeof(char) * (len + 1));
+	recip = ft_calloc(len + 1, sizeof(char));
 	if (!recip)
 		return (NULL);
 	nb = n;

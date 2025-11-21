@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 01:00:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/21 08:07:09 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/21 17:29:28 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,19 +60,18 @@ static int	env_parse_and_add(char *env_line, t_env **head)
 	}
 	return (1);
 }
+
 static void	init_default_env(t_env **env)
 {
 	char	cwd[PATH_MAX];
 	char	*shlvl_str;
 	int		shlvl;
 
-	// PWD : si elle n'existe pas, la créer avec getcwd()
 	if (!env_get(*env, "PWD"))
 	{
 		if (getcwd(cwd, sizeof(cwd)))
 			env_set(env, "PWD", cwd);
 	}
-	// SHLVL : incrémenter ou initialiser à 1
 	shlvl_str = env_get(*env, "SHLVL");
 	if (shlvl_str)
 	{
@@ -83,7 +82,6 @@ static void	init_default_env(t_env **env)
 	}
 	else
 		env_set(env, "SHLVL", "1");
-	// _ : initialiser à vide pour l'instant (sera mis à jour après chaque commande)
 	if (!env_get(*env, "_"))
 		env_set(env, "_", "");
 }
@@ -94,7 +92,6 @@ t_env	*env_init(char **envp)
 	int		i;
 
 	head = NULL;
-	// Parser l'environnement existant (si présent)
 	if (envp && envp[0])
 	{
 		i = 0;
@@ -104,7 +101,6 @@ t_env	*env_init(char **envp)
 			i++;
 		}
 	}
-	// Toujours initialiser les variables obligatoires
 	init_default_env(&head);
 	return (head);
 }

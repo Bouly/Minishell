@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 21:47:35 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/21 03:09:53 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/21 18:26:30 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,10 @@ int					is_operator(char c);
 int					is_quote(char c);
 int					skip_spaces(const char *line, int i);
 char				*extract_quoted_word(char *line, int *i, char quote_char);
+/* Expand */
+char				*expand_variables(char *str, t_env *env, int exit_status);
 
 /* Lexer */
-t_token				*lexer(char *line);
+t_token				*lexer(char *line, t_shell *shell);
 
 #endif
