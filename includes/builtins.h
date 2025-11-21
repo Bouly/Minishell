@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 01:54:55 by aboulahd          #+#    #+#             */
-/*   Updated: 2025/11/21 00:10:45 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/21 20:45:17 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ int						builtin_cd(char **args, t_env **env);
 int						builtin_export(char **args, t_env **env);
 int						builtin_unset(char **args, t_env **env);
 int						builtin_exit(char **args, t_shell *shell);
+void					free_and_exit(t_shell *shell);
 
 // Builtin detection
 int						is_builtin(const char *cmd);

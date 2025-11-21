@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 21:14:57 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/21 18:35:42 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/21 20:48:27 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,14 @@ int	main(int ac, char **av, char **env)
 	char	*line;
 	t_token	*token;
 	t_shell	shell;
+	int		tmp;
 
 	(void)ac;
 	(void)av;
 	shell.env = env_init(env);
 	shell.exit_status = 0;
 	shell.ast = NULL;
+	tmp = 0;
 	shell.envp = NULL;
 	setup_signals_interactive();
 	disable_ctrl_chars_display();
@@ -32,11 +34,11 @@ int	main(int ac, char **av, char **env)
 		if (!line)
 		{
 			ft_putstr_fd("exit\n", 2);
-			break ;
+			tmp = shell.exit_status;
+			env_free(shell.env);
+			exit(tmp);
 		}
 		add_history(line);
-		if (ft_strcmp(line, "$?") == 0)
-			printf("%d\n", shell.exit_status);
 		line = handle_multiline_input(line);
 		token = lexer(line, &shell);
 		free(line);
