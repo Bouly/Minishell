@@ -6,19 +6,19 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 15:52:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/19 19:14:57 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/21 21:20:35 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void	disable_ctrl_chars_display(void)
+void	enable_ctrl_chars_display(void)
 {
 	struct termios	term;
 
 	if (tcgetattr(STDIN_FILENO, &term) == -1)
 		return ;
-	term.c_lflag &= ~ECHOCTL;
+	term.c_lflag |= ECHOCTL;
 	tcsetattr(STDIN_FILENO, TCSANOW, &term);
 }
 
@@ -30,6 +30,21 @@ void	setup_signals_interactive(void)
 	sa_int.sa_handler = handle_sigint;
 	sigemptyset(&sa_int.sa_mask);
 	sa_int.sa_flags = SA_RESTART;
+	sigaction(SIGINT, &sa_int, NULL);
+	sa_quit.sa_handler = SIG_IGN;
+	sigemptyset(&sa_quit.sa_mask);
+	sa_quit.sa_flags = 0;
+	sigaction(SIGQUIT, &sa_quit, NULL);
+}
+
+void	setup_signals_child(void)
+{
+	struct sigaction	sa_int;
+	struct sigaction	sa_quit;
+
+	sa_int.sa_handler = handle_sigint_child;
+	sigemptyset(&sa_int.sa_mask);
+	sa_int.sa_flags = 0;
 	sigaction(SIGINT, &sa_int, NULL);
 	sa_quit.sa_handler = SIG_IGN;
 	sigemptyset(&sa_quit.sa_mask);

@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 17:10:10 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/19 20:47:12 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/21 21:20:35 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ void	pipe_exec(t_ast *three, char **envp, t_ast *root, t_shell *shell)
 	int	status;
 
 	pipe(fd);
+	setup_signals_child();
 	pid = fork();
 	if (pid == 0)
 	{
@@ -56,5 +57,6 @@ void	pipe_exec(t_ast *three, char **envp, t_ast *root, t_shell *shell)
 	close(fd[1]);
 	waitpid(pid, NULL, 0);
 	waitpid(pid2, &status, 0);
+	setup_signals_interactive();
 	shell->exit_status = get_exit_status(status);
 }

@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:29:04 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/21 08:13:45 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/21 21:20:26 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,11 +65,13 @@ void	cmd_exec(t_ast *node, char **envp, t_shell *shell)
 		shell->exit_status = 127;
 		return ;
 	}
+	setup_signals_child();
 	id = fork();
 	if (id == 0)
 		child_exec(node, path, envp);
 	free(path);
 	waitpid(id, &status, 0);
+	setup_signals_interactive();
 	shell->exit_status = get_exit_status(status);
 }
 

@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 21:14:57 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/21 20:48:27 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/21 21:28:52 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,22 @@ int	main(int ac, char **av, char **env)
 	t_token	*token;
 	t_shell	shell;
 	int		tmp;
-
+	
 	(void)ac;
 	(void)av;
+	if (isatty(STDIN_FILENO) == 0)
+	{
+		write(2, "\e[1;38;2;mSoit plus sympa sur tes tests ", 41);
+		write(2, "stp et suis plutot la correction\n", 34);
+		return (1);
+	}
 	shell.env = env_init(env);
 	shell.exit_status = 0;
 	shell.ast = NULL;
 	tmp = 0;
 	shell.envp = NULL;
 	setup_signals_interactive();
-	disable_ctrl_chars_display();
+	enable_ctrl_chars_display();
 	while (1)
 	{
 		line = readline("\033[1;91mEl Cancer > \033[0m");

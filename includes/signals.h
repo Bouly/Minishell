@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 10:00:22 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/21 00:10:20 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/21 21:20:32 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,12 @@
 
 /* Signal handlers */
 void	handle_sigint(int sig);
+void	handle_sigint_child(int sig);
 
 /* Signal setup */
 void	setup_signals_interactive(void);
+void	setup_signals_child(void);
 void	setup_signals_exec(void);
-void	disable_ctrl_chars_display(void);
+void	enable_ctrl_chars_display(void);
 
 #endif
