@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:29:04 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/19 16:10:00 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/21 08:13:45 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,32 @@ void	cmd_exec(t_ast *node, char **envp, t_shell *shell)
 	char	*path;
 	int		id;
 	int		status;
+	int		fd;
+	int		flags;
 
+	if (!node->args || !node->args[0])
+	{
+		if (node->outfile)
+		{
+			if (node->append)
+				flags = O_WRONLY | O_CREAT | O_APPEND;
+			else
+				flags = O_WRONLY | O_CREAT | O_TRUNC;
+			fd = open(node->outfile, flags, 0644);
+			if (fd < 0)
+			{
+				perror("open");
+				shell->exit_status = 1;
+				return ;
+			}
+			close(fd);
+			shell->exit_status = 0;
+			return ;
+		}
+		ft_putstr_fd("syntax error: no command\n", 2);
+		shell->exit_status = 2;
+		return ;
+	}
 	if (is_builtin(node->args[0]))
 		return (exec_builtin_with_redir(node, shell));
 	path = find_command(node->args[0], envp);

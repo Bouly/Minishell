@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 01:00:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/21 00:10:47 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/21 08:07:09 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,21 +60,52 @@ static int	env_parse_and_add(char *env_line, t_env **head)
 	}
 	return (1);
 }
+static void	init_default_env(t_env **env)
+{
+	char	cwd[PATH_MAX];
+	char	*shlvl_str;
+	int		shlvl;
+
+	// PWD : si elle n'existe pas, la créer avec getcwd()
+	if (!env_get(*env, "PWD"))
+	{
+		if (getcwd(cwd, sizeof(cwd)))
+			env_set(env, "PWD", cwd);
+	}
+	// SHLVL : incrémenter ou initialiser à 1
+	shlvl_str = env_get(*env, "SHLVL");
+	if (shlvl_str)
+	{
+		shlvl = ft_atoi(shlvl_str) + 1;
+		shlvl_str = ft_itoa(shlvl);
+		env_set(env, "SHLVL", shlvl_str);
+		free(shlvl_str);
+	}
+	else
+		env_set(env, "SHLVL", "1");
+	// _ : initialiser à vide pour l'instant (sera mis à jour après chaque commande)
+	if (!env_get(*env, "_"))
+		env_set(env, "_", "");
+}
 
 t_env	*env_init(char **envp)
 {
 	t_env	*head;
 	int		i;
 
-	if (!envp || !envp[0])
-		return (NULL);
 	head = NULL;
-	i = 0;
-	while (envp[i])
+	// Parser l'environnement existant (si présent)
+	if (envp && envp[0])
 	{
-		env_parse_and_add(envp[i], &head);
-		i++;
+		i = 0;
+		while (envp[i])
+		{
+			env_parse_and_add(envp[i], &head);
+			i++;
+		}
 	}
+	// Toujours initialiser les variables obligatoires
+	init_default_env(&head);
 	return (head);
 }
 
@@ -90,15 +121,4 @@ void	env_free(t_env *env)
 		free(tmp->value);
 		free(tmp);
 	}
-}
-
-char	*env_get(t_env *env, const char *key)
-{
-	while (env)
-	{
-		if (ft_strcmp(env->key, key) == 0)
-			return (env->value);
-		env = env->next;
-	}
-	return (NULL);
 }

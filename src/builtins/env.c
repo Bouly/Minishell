@@ -6,11 +6,22 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 01:00:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/21 03:18:31 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/21 08:07:16 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+char	*env_get(t_env *env, const char *key)
+{
+	while (env)
+	{
+		if (ft_strcmp(env->key, key) == 0)
+			return (env->value);
+		env = env->next;
+	}
+	return (NULL);
+}
 
 int	builtin_env(char **args, t_env *env)
 {
@@ -25,9 +36,3 @@ int	builtin_env(char **args, t_env *env)
 	}
 	return (0);
 }
-
-/*implementer si lenv est supprimer ou quil ne le trouve pas juste imprimer ca
-	PWD=/home/user/minishell
-	SHLVL=1
-	_=/usr/bin/env
-*/
