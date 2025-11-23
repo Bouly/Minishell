@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 12:20:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/23 12:25:38 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 13:49:23 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,8 @@ void	handle_command_not_found(char *cmd, t_shell *shell)
 	}
 	else
 	{
-		ft_putstr_fd("command not found\n", 2);
+		ft_putstr_fd(cmd, 2);
+		ft_putstr_fd(": command not found\n", 2);
 		shell->exit_status = 127;
 	}
 }
