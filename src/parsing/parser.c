@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 02:30:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/23 20:25:48 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 21:12:51 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,8 @@ t_ast	*parse(t_token *tokens)
 		tree->left = parse(left_tokens);
 		token_free(&left_tokens);
 		tree->right = parse(pipe->next);
+		if (!tree->left || !tree->right)
+			return (ast_free(&tree), NULL);
 	}
 	else
 	{
