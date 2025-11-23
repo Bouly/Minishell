@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 17:10:10 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/23 12:27:47 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 20:25:48 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void	pipe_exec(t_ast *three, t_mother *mother)
 	int	fd[2];
 	int	status;
 
+	status = 0;
 	pipe(fd);
 	setup_signals_child();
 	pid = fork();

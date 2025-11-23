@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 12:20:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/23 13:49:23 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 20:25:48 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ void	execute_external_command(t_ast *node, char *path, t_mother *mother)
 	int	id;
 	int	status;
 
+	status = 0;
 	setup_signals_child();
 	id = fork();
 	if (id == 0)

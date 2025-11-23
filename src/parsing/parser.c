@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 02:30:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/23 12:49:46 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 20:25:48 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ static int	handle_pipe_error(t_token *left_tokens, t_token *pipe, t_ast *tree)
 	if (!pipe->next || pipe->next->type == TOKEN_PIPE)
 	{
 		ft_putstr_fd("bash: syntax error near unexpected token `||'\n", 2);
+		token_free(&left_tokens);
 		ast_free(&tree);
 		return (0);
 	}
