@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 21:14:57 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/23 14:27:44 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 17:10:28 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	main(int ac, char **av, char **env)
 	init_shell(&shell, env);
 	while (1)
 	{
-		line = readline("\033[1;91mEl Cancer > \033[0m");
+		line = readline("\001\033[1;91m\002El Cancer > \001\033[0m\002");
 		if (!line)
 			handle_eof(&shell);
 		add_history(line);
