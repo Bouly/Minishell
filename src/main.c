@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 21:14:57 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/23 17:31:45 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 17:47:34 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ int	main(int ac, char **av, char **env)
 	(void)ac;
 	(void)av;
 	if (isatty(STDIN_FILENO) == 0)
-		return (write(2, "\e[1;38;2;mSoit plus sympa sur tes tests ", 41),
-			write(2, "stp et suis plutot la correction\n", 34), 1);
+		return (ft_putstr_fd("\e[1;38;2;mstp suis plutot la correction\n", 2),
+			1);
 	init_shell(&shell, env);
 	while (1)
 	{
