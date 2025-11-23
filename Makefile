@@ -6,7 +6,7 @@
 #    By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/19 21:13:48 by abendrih          #+#    #+#              #
-#    Updated: 2025/10/27 05:32:30 by abendrih         ###   ########.fr        #
+#    Updated: 2025/11/23 13:56:03 by abendrih         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,15 +36,15 @@ GRAY        = \033[0;37m
 # ============================== RULES ==================================== #
 
 all: $(LIBFT) $(NAME)
+
+$(NAME): $(OBJ)
 	@printf "\n$(CYAN)🔧 Building $(NAME)...$(RESET)\n"
 	@for i in 10 20 30 40 50 60 70 80 90 100; do \
 		printf "\r$(GREEN)[%-50s] %d%%$(RESET)" "$$(printf '#%.0s' $$(seq 1 $$((i/2))))" $$i; \
 		sleep 0.03; \
-	done; \
-	printf "\n\n✅ $(NAME) compiled successfully.$(RESET)\n\n"
-
-$(NAME): $(OBJ)
+	done
 	@$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME) -lreadline
+	@printf "\n\n✅ $(NAME) compiled successfully.$(RESET)\n\n"
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)

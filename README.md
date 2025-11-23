@@ -160,3 +160,414 @@ Ce projet nous a permis de développer :
 # Exemple du flow d'une commande
 <img alt="image" src="https://github.com/user-attachments/assets/93087866-8814-427b-909e-41a8546613b2" />
 
+
+
+═══════════════════════════════════════════════════════════════════════
+                         MINISHELL - FLUX D'EXÉCUTION
+═══════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                            1. MAIN (main.c)                         │
+└─────────────────────────────────────────────────────────────────────┘
+                                   │
+                                   ▼
+                    ┌──────────────────────────┐
+                    │   init_shell()           │
+                    │   - Copie env            │
+                    │   - exit_status = 0      │
+                    │   - Setup signals        │
+                    └──────────────────────────┘
+                                   │
+                                   ▼
+                    ┌──────────────────────────┐
+                    │   BOUCLE PRINCIPALE      │
+                    │   while(1)               │
+                    └──────────────────────────┘
+                                   │
+                                   ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      2. LECTURE (readline)                          │
+│   line = readline("El Cancer > ")                                   │
+└─────────────────────────────────────────────────────────────────────┘
+                                   │
+                                   ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│              3. PROCESS_INPUT (main_utils.c)                        │
+└─────────────────────────────────────────────────────────────────────┘
+                                   │
+                    ┌──────────────┴──────────────┐
+                    ▼                             ▼
+        ┌───────────────────┐        ┌───────────────────────┐
+        │   LEXER           │        │  handle_multiline     │
+        │  (lexer.c)        │        │  (gère '\' en fin)    │
+        └───────────────────┘        └───────────────────────┘
+                    │
+        ┌───────────┴───────────┐
+        │   Tokenisation:       │
+        │   - Quotes (' ")      │
+        │   - Variables ($)     │
+        │   - Pipes (|)         │
+        │   - Redirections      │
+        │     (>, >>, <, <<)    │
+        └───────────┬───────────┘
+                    │
+                    ▼
+        ┌─────────────────────────────────┐
+        │   Token list:                   │
+        │   echo → WORD                   │
+        │   hello → WORD                  │
+        │   > → TOKEN_REDIRECT_OUT        │
+        │   file → WORD                   │
+        │   | → TOKEN_PIPE                │
+        │   cat → WORD                    │
+        └─────────────────────────────────┘
+                    │
+                    ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│              4. PARSER (parser.c)                                   │
+│   ast = parse(tokens)                                               │
+└─────────────────────────────────────────────────────────────────────┘
+                    │
+        ┌───────────┴───────────┐
+        │   Trouve pipes?       │
+        └───────────┬───────────┘
+                    │
+        ┌───────────┴───────────────────────┐
+        │                                   │
+        ▼ OUI                               ▼ NON
+┌──────────────────┐              ┌──────────────────────┐
+│  NODE_PIPE       │              │  NODE_COMMAND        │
+│  Récursif:       │              │                      │
+│  left = parse()  │              │  extract_redirections│
+│  right = parse() │              │  args = tokens[]     │
+└──────────────────┘              └──────────────────────┘
+                    │
+                    ▼
+        ┌─────────────────────────────┐
+        │   AST (Arbre):              │
+        │                             │
+        │        PIPE                 │
+        │       /    \                │
+        │   CMD1     CMD2             │
+        │   echo     cat              │
+        │   args[]   args[]           │
+        │   >file    (stdin: pipe)    │
+        └─────────────────────────────┘
+                    │
+                    ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│          5. HEREDOC PROCESSING (heredoc_process.c)                  │
+│   process_all_heredocs(ast, shell)                                  │
+└─────────────────────────────────────────────────────────────────────┘
+                    │
+        ┌───────────┴───────────────────┐
+        │   Pour chaque heredoc (<<):   │
+        │   1. fork()                   │
+        │   2. pipe()                   │
+        │   3. Child lit stdin          │
+        │   4. Écrit dans pipe          │
+        │   5. Parent garde fd[0]       │
+        └───────────────────────────────┘
+                    │
+                    ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│          6. EXECUTE_COMMAND (main_utils.c)                          │
+└─────────────────────────────────────────────────────────────────────┘
+                    │
+                    ▼
+        ┌───────────────────────┐
+        │   init_mother()       │
+        │   - root = ast        │
+        │   - envp = env[]      │
+        │   - shell = &shell    │
+        └───────────────────────┘
+                    │
+                    ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│              7. MOTHER_EXEC (executor.c)                            │
+└─────────────────────────────────────────────────────────────────────┘
+                    │
+        ┌───────────┴────────────┐
+        │   Type de noeud?       │
+        └───────────┬────────────┘
+                    │
+        ┌───────────┴───────────────────────┐
+        │                                   │
+        ▼ NODE_PIPE                         ▼ NODE_COMMAND
+┌────────────────────────┐          ┌────────────────────────┐
+│  PIPE_EXEC             │          │  CMD_EXEC              │
+│  (pipeline.c)          │          │  (executor.c)          │
+└────────────────────────┘          └────────────────────────┘
+        │                                   │
+        │                       ┌───────────┴────────────┐
+        │                       │                        │
+        │                       ▼                        ▼
+        │              ┌─────────────────┐    ┌──────────────────┐
+        │              │  is_builtin()?  │    │  Commande externe│
+        │              └─────────────────┘    └──────────────────┘
+        │                       │                      │
+        │              ┌────────┴────────┐             │
+        │              ▼                 ▼             │
+        │      ┌─────────────┐  ┌──────────────┐       │
+        │      │  BUILTIN    │  │  find_command│       │
+        │      │  (direct)   │  │  fork+execve │       │
+        │      └─────────────┘  └──────────────┘       │
+        │                                              │
+        ▼                                              ▼
+
+═══════════════════════════════════════════════════════════════════════
+                        DÉTAILS PAR TYPE DE COMMANDE
+═══════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  A. COMMANDE SIMPLE: echo hello                                     │
+└─────────────────────────────────────────────────────────────────────┘
+
+readline("El Cancer > ")
+    │
+    ▼ "echo hello"
+lexer()
+    │
+    ▼ [WORD:"echo"] → [WORD:"hello"]
+parse()
+    │
+    ▼ NODE_COMMAND { args=["echo", "hello"] }
+mother_exec()
+    │
+    ▼ cmd_exec()
+    │
+    ▼ is_builtin("echo") → OUI
+    │
+    ▼ builtin_echo(args)
+    │   └─> ft_putstr_fd("hello", 1)
+    ▼
+exit_status = 0
+
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  B. COMMANDE AVEC REDIRECTION: echo hello > file                    │
+└─────────────────────────────────────────────────────────────────────┘
+
+lexer()
+    │
+    ▼ [WORD:"echo"] → [WORD:"hello"] → [>] → [WORD:"file"]
+parse()
+    │
+    ▼ extract_redirections()
+    │   └─> outfile = "file", append = 0
+    │
+    ▼ NODE_COMMAND { args=["echo","hello"], outfile="file" }
+cmd_exec()
+    │
+    ▼ exec_builtin_with_redir()
+    │   1. Sauvegarde stdout (saved_out = dup(1))
+    │   2. open("file", O_CREAT|O_TRUNC)
+    │   3. dup2(fd, STDOUT_FILENO)
+    │   4. builtin_echo()  ───> Écrit dans file
+    │   5. dup2(saved_out, STDOUT_FILENO)
+    │   6. close(saved_out)
+    ▼
+exit_status = 0
+
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  C. PIPE: echo hello | cat                                          │
+└─────────────────────────────────────────────────────────────────────┘
+
+lexer()
+    │
+    ▼ [WORD:"echo"] → [WORD:"hello"] → [PIPE] → [WORD:"cat"]
+parse()
+    │
+    ▼ find_pipe() → Trouvé!
+    │
+    ▼ NODE_PIPE
+        │
+        ├─> left: NODE_COMMAND { args=["echo","hello"] }
+        │
+        └─> right: NODE_COMMAND { args=["cat"] }
+mother_exec()
+    │
+    ▼ pipe_exec()
+        │
+        ├─> pipe(fd)  [fd[0]=read, fd[1]=write]
+        │
+        ├─> fork() → pid1
+        │   └─> Child 1:
+        │       1. dup2(fd[1], STDOUT)  (sortie → pipe)
+        │       2. close(fd[0], fd[1])
+        │       3. mother_exec(left)
+        │       4. builtin_echo() ────> Écrit dans pipe
+        │       5. exit(0)
+        │
+        ├─> fork() → pid2
+        │   └─> Child 2:
+        │       1. dup2(fd[0], STDIN)   (entrée ← pipe)
+        │       2. close(fd[0], fd[1])
+        │       3. mother_exec(right)
+        │       4. execve("/bin/cat")  ───> Lit depuis pipe
+        │       5. exit(0)
+        │
+        ├─> Parent:
+        │   1. close(fd[0], fd[1])
+        │   2. waitpid(pid1)
+        │   3. waitpid(pid2, &status)
+        │   4. exit_status = WEXITSTATUS(status)
+        │
+        ▼
+exit_status = 0
+
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  D. HEREDOC: cat << EOF                                             │
+└─────────────────────────────────────────────────────────────────────┘
+
+lexer()
+    │
+    ▼ [WORD:"cat"] → [HEREDOC:"<<"] → [WORD:"EOF"]
+parse()
+    │
+    ▼ NODE_COMMAND { args=["cat"], heredocs->delim="EOF" }
+process_all_heredocs()
+    │
+    ▼ process_single_heredoc()
+        │
+        ├─> pipe(pipefd)
+        │
+        ├─> fork()
+        │   └─> Child:
+        │       1. Boucle readline("> ")
+        │       2. Compare line == "EOF"
+        │       3. write(pipefd[1], line)
+        │       4. exit(0)
+        │
+        ├─> Parent:
+        │   1. close(pipefd[1])
+        │   2. waitpid()
+        │   3. heredoc->fd = pipefd[0]  (garde fd ouvert)
+        │
+        ▼
+cmd_exec()
+    │
+    ▼ fork() + execve("/bin/cat")
+    │
+    └─> setup_child_input()
+        └─> dup2(heredoc->fd, STDIN)  ───> cat lit depuis heredoc
+    ▼
+exit_status = 0
+
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  E. BUILTIN CD: cd /tmp                                             │
+└─────────────────────────────────────────────────────────────────────┘
+
+cmd_exec()
+    │
+    ▼ is_builtin("cd") → OUI
+    │
+    ▼ builtin_cd(args, &env)
+    │   1. get_target_dir()
+    │       └─> Si "~" → HOME
+    │       └─> Si "-" → OLDPWD
+    │       └─> Sinon → args[1]
+    │   2. old_pwd = getcwd()
+    │   3. chdir(target_dir)
+    │   4. update_pwd_vars()
+    │       └─> OLDPWD = old_pwd
+    │       └─> PWD = getcwd()
+    │
+    ▼
+exit_status = 0 (ou 1 si erreur)
+
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  F. COMMANDE EXTERNE: /bin/ls -la                                   │
+└─────────────────────────────────────────────────────────────────────┘
+
+cmd_exec()
+    │
+    ▼ is_builtin("ls") → NON
+    │
+    ▼ find_command("ls", envp)
+    │   1. check_absolute_path() → Non
+    │   2. Cherche dans PATH
+    │   3. Retourne "/bin/ls"
+    │
+    ▼ execute_external_command()
+        │
+        ├─> fork()
+        │   └─> child_exec()
+        │       1. setup_child_input()   (redirections <)
+        │       2. setup_child_output()  (redirections >)
+        │       3. execve("/bin/ls", ["-la"], envp)
+        │
+        ├─> Parent:
+        │   1. waitpid(&status)
+        │   2. exit_status = WEXITSTATUS(status)
+        │
+        ▼
+exit_status = 0
+
+
+═══════════════════════════════════════════════════════════════════════
+                      GESTION DES SIGNAUX (signals.c)
+═══════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  MODE INTERACTIF (readline)                                         │
+│  setup_signals_interactive()                                        │
+│                                                                     │
+│  SIGINT (Ctrl+C):   → Affiche nouveau prompt                        │
+│  SIGQUIT (Ctrl+\):  → Ignoré                                        │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  MODE EXECUTION (fork/wait)                                         │
+│  setup_signals_child()                                              │
+│                                                                     │
+│  SIGINT:   → Ignoré (parent), traité par child                      │
+│  SIGQUIT:  → Ignoré (parent), traité par child                      │
+└─────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────┐
+│  MODE CHILD (execve)                                                │
+│  setup_signals_exec()                                               │
+│                                                                     │
+│  SIGINT:   → SIG_DFL (termine le processus)                         │
+│  SIGQUIT:  → SIG_DFL (core dump)                                    │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════
+                        STRUCTURES DE DONNÉES
+═══════════════════════════════════════════════════════════════════════
+
+t_shell {
+    t_env *env;              // Liste chaînée des variables
+    int exit_status;         // Dernier code de retour
+    t_ast *ast;              // Arbre syntaxique
+    char **envp;             // Tableau env pour execve
+}
+
+t_mother {
+    t_ast *root;             // AST complet
+    char **envp;             // Environnement
+    t_shell *shell;          // Pointeur vers shell
+}
+
+t_ast {
+    t_node_type type;        // NODE_PIPE | NODE_COMMAND
+    char **args;             // ["cmd", "arg1", "arg2"]
+    char *infile;            // Fichier < input
+    char *outfile;           // Fichier > output
+    int append;              // 1 si >>, 0 si >
+    t_heredoc *heredocs;     // Liste des <<
+    t_ast *left;             // Sous-arbre gauche
+    t_ast *right;            // Sous-arbre droit
+}
+
+t_token {
+    t_token_type type;       // WORD | PIPE | REDIRECT_*
+    char *value;             // Contenu du token
+    t_token *next;           // Token suivant
+}
