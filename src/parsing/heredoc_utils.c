@@ -6,51 +6,11 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 00:00:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/23 11:14:44 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 17:35:30 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-/*
-** Crée un nouveau heredoc avec son délimiteur
-** Initialise le fd à -1 (pas encore ouvert)
-** Retourne: nouveau heredoc alloué
-*/
-t_heredoc	*heredoc_new(char *delim)
-{
-	t_heredoc	*new;
-
-	new = malloc(sizeof(t_heredoc));
-	if (!new)
-		return (NULL);
-	new->delim = ft_strdup(delim);
-	new->fd = -1;
-	new->expand = 1;
-	new->next = NULL;
-	return (new);
-}
-
-/*
-** Ajoute un heredoc à la fin de la liste
-** Paramètres: lst - liste, new - heredoc à ajouter
-*/
-void	heredoc_addback(t_heredoc **lst, t_heredoc *new)
-{
-	t_heredoc	*current;
-
-	if (!lst || !new)
-		return ;
-	if (!*lst)
-	{
-		*lst = new;
-		return ;
-	}
-	current = *lst;
-	while (current->next)
-		current = current->next;
-	current->next = new;
-}
 
 /*
 ** Libère tous les heredocs d'une liste
@@ -118,4 +78,31 @@ void	close_all_ast_heredocs(t_ast *ast)
 		if (ast->heredocs)
 			heredoc_close_all_fds(ast->heredocs);
 	}
+}
+
+/*
+** Traite récursivement tous les heredocs de l'AST
+** Parcourt l'arbre et traite les heredocs de chaque commande
+** Retourne: 0 si succès, -1 si erreur ou interruption
+*/
+int	process_all_heredocs(t_ast *ast, t_shell *shell)
+{
+	if (!ast)
+		return (0);
+	if (ast->type == NODE_PIPE)
+	{
+		if (process_all_heredocs(ast->left, shell) == -1)
+			return (-1);
+		if (process_all_heredocs(ast->right, shell) == -1)
+			return (-1);
+	}
+	else if (ast->type == NODE_COMMAND)
+	{
+		if (ast->heredocs)
+		{
+			if (process_heredocs(ast->heredocs, shell) == -1)
+				return (-1);
+		}
+	}
+	return (0);
 }

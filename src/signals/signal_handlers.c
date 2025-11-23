@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 15:52:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/21 21:20:33 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 17:21:20 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 void	handle_sigint(int sig)
 {
 	(void)sig;
+	g_signal = 130;
 	write(STDOUT_FILENO, "\n", 1);
 	rl_on_new_line();
 	rl_replace_line("", 0);

@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/19 21:14:57 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/23 17:10:28 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 17:31:45 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,15 +26,17 @@ int	main(int ac, char **av, char **env)
 	(void)ac;
 	(void)av;
 	if (isatty(STDIN_FILENO) == 0)
-	{
-		write(2, "\e[1;38;2;mSoit plus sympa sur tes tests ", 41);
-		write(2, "stp et suis plutot la correction\n", 34);
-		return (1);
-	}
+		return (write(2, "\e[1;38;2;mSoit plus sympa sur tes tests ", 41),
+			write(2, "stp et suis plutot la correction\n", 34), 1);
 	init_shell(&shell, env);
 	while (1)
 	{
 		line = readline("\001\033[1;91m\002El Cancer > \001\033[0m\002");
+		if (g_signal)
+		{
+			shell.exit_status = g_signal;
+			g_signal = 0;
+		}
 		if (!line)
 			handle_eof(&shell);
 		add_history(line);
