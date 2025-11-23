@@ -64,10 +64,27 @@ static void	handle_append_redirect(t_token *current, t_ast *node)
 static void	handle_heredoc(t_token *current, t_ast *node)
 {
 	t_heredoc	*new_heredoc;
+	char		*delim;
+	char		*clean_delim;
+	size_t		len;
 
 	if (current->type == TOKEN_HEREDOC && current->next)
 	{
-		new_heredoc = heredoc_new(current->next->value);
+		delim = current->next->value;
+		len = ft_strlen(delim);
+		if (len >= 2 && ((delim[0] == '"' && delim[len - 1] == '"')
+				|| (delim[0] == '\'' && delim[len - 1] == '\'')))
+		{
+			clean_delim = ft_substr(delim, 1, len - 2);
+			new_heredoc = heredoc_new(clean_delim);
+			new_heredoc->expand = 0;
+			free(clean_delim);
+		}
+		else
+		{
+			new_heredoc = heredoc_new(delim);
+			new_heredoc->expand = 1;
+		}
 		if (new_heredoc)
 			heredoc_addback(&node->heredocs, new_heredoc);
 	}

@@ -12,6 +12,11 @@
 
 #include "../../includes/minishell.h"
 
+/*
+** Trouve le premier pipe dans la liste de tokens
+** Utilisé pour diviser la commande en sous-arbres gauche/droite
+** Retourne: token pipe trouvé ou NULL
+*/
 t_token	*find_pipe(t_token *tokens)
 {
 	t_token	*key;
@@ -24,6 +29,11 @@ t_token	*find_pipe(t_token *tokens)
 	return (key);
 }
 
+/*
+** Copie tous les tokens avant le premier pipe
+** Crée une nouvelle liste pour construire le sous-arbre gauche
+** Retourne: nouvelle liste de tokens
+*/
 static t_token	*before_pipe(t_token **tokens)
 {
 	t_token	*key;
@@ -40,6 +50,11 @@ static t_token	*before_pipe(t_token **tokens)
 	return (tmp);
 }
 
+/*
+** Vérifie les erreurs de syntaxe liées aux pipes
+** Détecte les pipes en début/fin ou multiples consécutifs
+** Retourne: 1 si OK, 0 si erreur de syntaxe
+*/
 static int	handle_pipe_error(t_token *left_tokens, t_token *pipe, t_ast *tree)
 {
 	if (left_tokens->type == TOKEN_PIPE)
@@ -58,6 +73,11 @@ static int	handle_pipe_error(t_token *left_tokens, t_token *pipe, t_ast *tree)
 	return (1);
 }
 
+/*
+** Parse récursivement les tokens en arbre syntaxique (AST)
+** Gère les pipes et construit l'arbre gauche/droite
+** Retourne: nœud AST ou NULL si erreur
+*/
 t_ast	*parse(t_token *tokens)
 {
 	t_token	*pipe;

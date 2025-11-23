@@ -12,6 +12,12 @@
 
 #include "../includes/minishell.h"
 
+/*
+** Fonction principale du minishell
+** Initialise le shell, configure les signaux et lance la boucle de lecture
+** des commandes. Vérifie d'abord que l'entrée est un terminal (TTY).
+** Paramètres: env - tableau des variables d'environnement du système
+*/
 int	main(int ac, char **av, char **env)
 {
 	char	*line;

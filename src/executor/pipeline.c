@@ -12,6 +12,11 @@
 
 #include "../../includes/minishell.h"
 
+/*
+** Configure les file descriptors pour un côté du pipe
+** side=1 pour écriture (gauche), side=0 pour lecture (droite)
+** Fait le dup2 et ferme les fds du pipe
+*/
 static void	setup_pipe_fd(int fd[2], int side)
 {
 	if (side == 1)
@@ -22,6 +27,10 @@ static void	setup_pipe_fd(int fd[2], int side)
 	close(fd[1]);
 }
 
+/*
+** Code exécuté par le processus fils d'un pipe
+** Configure les fds, exécute la commande et nettoie
+*/
 static void	execute_pipe_child(t_ast *node, int fd[2], int side,
 		t_mother *mother)
 {
@@ -34,6 +43,11 @@ static void	execute_pipe_child(t_ast *node, int fd[2], int side,
 	exit(0);
 }
 
+/*
+** Exécute un pipeline (commande | commande)
+** Fork 2 processus, configure le pipe et attend la fin
+** Paramètres: three - nœud PIPE, mother - contexte
+*/
 void	pipe_exec(t_ast *three, t_mother *mother)
 {
 	int	pid;

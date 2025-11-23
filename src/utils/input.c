@@ -12,6 +12,11 @@
 
 #include "../../includes/minishell.h"
 
+/*
+** Vérifie si la ligne contient des quotes non fermées
+** Compte les guillemets simples et doubles en ignorant ceux à l'intérieur
+** Retourne: 1 si des quotes ne sont pas fermées, 0 sinon
+*/
 int	has_unclosed_quotes(char *line)
 {
 	int	count;
@@ -32,6 +37,11 @@ int	has_unclosed_quotes(char *line)
 	return ((count + count_) % 2);
 }
 
+/*
+** Gère l'entrée multiligne quand des quotes ne sont pas fermées
+** Continue à lire des lignes avec le prompt ">" jusqu'à fermeture des quotes
+** Retourne: la ligne complète avec toutes les lignes concaténées
+*/
 char	*handle_multiline_input(char *line)
 {
 	char	*next;

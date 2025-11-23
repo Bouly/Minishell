@@ -12,6 +12,11 @@
 
 #include "../../includes/minishell.h"
 
+/*
+** Crée un nouveau token avec le type et la valeur spécifiés
+** Alloue la mémoire et duplique la valeur
+** Retourne: nouveau token ou NULL si échec d'allocation
+*/
 t_token	*token_new(t_token_type type, char *value)
 {
 	t_token	*key;
@@ -25,6 +30,10 @@ t_token	*token_new(t_token_type type, char *value)
 	return (key);
 }
 
+/*
+** Ajoute un token à la fin de la liste chaînée de tokens
+** Paramètres: lst - pointeur sur la tête de liste, new - token à ajouter
+*/
 void	token_addback(t_token **lst, t_token *new)
 {
 	t_token	*key;
@@ -44,6 +53,11 @@ void	token_addback(t_token **lst, t_token *new)
 	new->next = NULL;
 }
 
+/*
+** Libère toute la liste chaînée de tokens
+** Libère la valeur de chaque token puis le token lui-même
+** Paramètres: lst - pointeur sur la tête de liste à libérer
+*/
 void	token_free(t_token **lst)
 {
 	t_token	*recip;

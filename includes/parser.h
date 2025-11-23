@@ -23,6 +23,7 @@ typedef struct s_heredoc
 {
 	char				*delim;
 	int					fd;
+	int					expand;
 	struct s_heredoc	*next;
 }					t_heredoc;
 

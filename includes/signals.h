@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ahb <ahb@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 10:00:22 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/21 21:20:32 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 16:44:24 by ahb              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,9 @@
 # include <stdio.h>
 # include <termios.h>
 # include <unistd.h>
+
+/* Global signal variable */
+extern volatile sig_atomic_t	g_signal;
 
 /* Signal handlers */
 void	handle_sigint(int sig);

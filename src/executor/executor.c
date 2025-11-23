@@ -12,6 +12,11 @@
 
 #include "../../includes/minishell.h"
 
+/*
+** Extrait le code de sortie d'un processus fils
+** Gère les sorties normales et les signaux (Ctrl-C, etc)
+** Retourne: code de sortie (0-255) ou 128+signal
+*/
 int	get_exit_status(int status)
 {
 	if (WIFEXITED(status))
@@ -25,6 +30,11 @@ int	get_exit_status(int status)
 	return (0);
 }
 
+/*
+** Exécute une commande simple (builtin ou externe)
+** Gère les builtins avec redirections et les commandes PATH
+** Paramètres: node - AST de la commande, mother - contexte
+*/
 void	cmd_exec(t_ast *node, t_mother *mother)
 {
 	char	*path;
@@ -39,6 +49,11 @@ void	cmd_exec(t_ast *node, t_mother *mother)
 	execute_external_command(node, path, mother);
 }
 
+/*
+** Point d'entrée de l'exécution d'un nœud AST
+** Détermine si c'est un pipe ou une commande simple
+** Paramètres: three - AST, mother - contexte
+*/
 void	mother_exec(t_ast *three, t_mother *mother)
 {
 	if (three->type == NODE_PIPE)

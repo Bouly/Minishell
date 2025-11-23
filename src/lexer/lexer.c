@@ -12,6 +12,11 @@
 
 #include "../../includes/minishell.h"
 
+/*
+** Gère la tokenisation d'un pipe '|'
+** Crée un token de type PIPE et avance l'index
+** Retourne: 1 pour succès
+*/
 static int	handle_pipe(int *i, t_token **head)
 {
 	token_addback(head, token_new(TOKEN_PIPE, "|"));
@@ -19,6 +24,11 @@ static int	handle_pipe(int *i, t_token **head)
 	return (1);
 }
 
+/*
+** Gère les redirections (<, >, <<, >>)
+** Détecte le type de redirection et crée le token approprié
+** Retourne: 1 pour succès
+*/
 static int	handle_redirect(const char *line, int *i, t_token **head)
 {
 	char	c;
@@ -47,6 +57,11 @@ static int	handle_redirect(const char *line, int *i, t_token **head)
 	return (1);
 }
 
+/*
+** Accumule les parties adjacentes d'un mot (avec ou sans quotes)
+** Gère la concaténation de mots collés comme abc"def"ghi
+** Retourne: chaîne complète accumulée
+*/
 static char	*accumulate_adjacent_parts(char *line, int *i)
 {
 	char	*result;
@@ -76,6 +91,11 @@ static char	*accumulate_adjacent_parts(char *line, int *i)
 	return (result);
 }
 
+/*
+** Traite un mot (avec quotes ou non) et l'ajoute aux tokens
+** Gère l'expansion de variables selon le type de quotes
+** Retourne: 1 pour succès, 0 pour échec
+*/
 static int	handle_word(char *line, int *i, t_token **head, t_shell *shell)
 {
 	char			*word;
@@ -103,6 +123,11 @@ static int	handle_word(char *line, int *i, t_token **head, t_shell *shell)
 	return (1);
 }
 
+/*
+** Analyse lexicale de la ligne de commande
+** Transforme la chaîne en liste de tokens (mots, opérateurs, redirections)
+** Retourne: liste chaînée de tokens ou NULL si erreur
+*/
 t_token	*lexer(char *line, t_shell *shell)
 {
 	t_token	*head;

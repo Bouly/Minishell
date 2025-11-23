@@ -12,6 +12,11 @@
 
 #include "../../includes/minishell.h"
 
+/*
+** Crée un nouveau heredoc avec son délimiteur
+** Initialise le fd à -1 (pas encore ouvert)
+** Retourne: nouveau heredoc alloué
+*/
 t_heredoc	*heredoc_new(char *delim)
 {
 	t_heredoc	*new;
@@ -21,10 +26,15 @@ t_heredoc	*heredoc_new(char *delim)
 		return (NULL);
 	new->delim = ft_strdup(delim);
 	new->fd = -1;
+	new->expand = 1;
 	new->next = NULL;
 	return (new);
 }
 
+/*
+** Ajoute un heredoc à la fin de la liste
+** Paramètres: lst - liste, new - heredoc à ajouter
+*/
 void	heredoc_addback(t_heredoc **lst, t_heredoc *new)
 {
 	t_heredoc	*current;
@@ -42,6 +52,11 @@ void	heredoc_addback(t_heredoc **lst, t_heredoc *new)
 	current->next = new;
 }
 
+/*
+** Libère tous les heredocs d'une liste
+** Ferme les file descriptors et libère les délimiteurs
+** Paramètres: lst - liste à libérer
+*/
 void	heredoc_free(t_heredoc **lst)
 {
 	t_heredoc	*current;
@@ -63,6 +78,11 @@ void	heredoc_free(t_heredoc **lst)
 	*lst = NULL;
 }
 
+/*
+** Ferme tous les file descriptors des heredocs
+** Met les fd à -1 après fermeture
+** Paramètres: heredocs - liste des heredocs
+*/
 void	heredoc_close_all_fds(t_heredoc *heredocs)
 {
 	t_heredoc	*current;
@@ -79,6 +99,11 @@ void	heredoc_close_all_fds(t_heredoc *heredocs)
 	}
 }
 
+/*
+** Ferme récursivement tous les heredocs de l'AST
+** Parcourt l'arbre et ferme les fds de chaque commande
+** Paramètres: ast - racine de l'arbre
+*/
 void	close_all_ast_heredocs(t_ast *ast)
 {
 	if (!ast)

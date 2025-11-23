@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ahb <ahb@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 15:52:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/21 21:20:35 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 16:44:24 by ahb              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+volatile sig_atomic_t	g_signal = 0;
 
 void	enable_ctrl_chars_display(void)
 {

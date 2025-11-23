@@ -12,6 +12,11 @@
 
 #include "../../includes/minishell.h"
 
+/*
+** Crée un nouveau nœud d'arbre syntaxique
+** Initialise tous les champs à NULL/0
+** Retourne: nœud AST alloué
+*/
 t_ast	*create_ast(t_node_type type, char **args)
 {
 	t_ast	*node;
@@ -30,6 +35,11 @@ t_ast	*create_ast(t_node_type type, char **args)
 	return (node);
 }
 
+/*
+** Libère récursivement tout l'arbre syntaxique
+** Libère args, fichiers, heredocs et nœuds enfants
+** Paramètres: tree - pointeur sur la racine à libérer
+*/
 void	ast_free(t_ast **tree)
 {
 	if (!tree || !*tree)

@@ -12,6 +12,11 @@
 
 #include "../../includes/minishell.h"
 
+/*
+** Extrait le nom de variable après un '$'
+** Gère le cas spécial de '$?'
+** Retourne: nom de la variable allouée
+*/
 static char	*get_var_name(char *str, int *i)
 {
 	int	start;
@@ -28,6 +33,11 @@ static char	*get_var_name(char *str, int *i)
 	return (ft_strndup(&str[start + 1], *i - start - 1));
 }
 
+/*
+** Récupère la valeur d'une variable d'environnement
+** Gère '$?' qui retourne le code de sortie
+** Retourne: valeur de la variable (chaîne vide si inexistante)
+*/
 static char	*get_var_value(char *var_name, t_env *env, int exit_status)
 {
 	char	*value;
@@ -40,6 +50,11 @@ static char	*get_var_value(char *var_name, t_env *env, int exit_status)
 	return (ft_strdup(value));
 }
 
+/*
+** Traite l'expansion d'une variable '$VAR'
+** Extrait le nom et récupère sa valeur
+** Retourne: valeur de la variable
+*/
 static char	*process_variable(char *str, int *i, t_env *env, int exit_status)
 {
 	char	*var_name;
@@ -51,6 +66,11 @@ static char	*process_variable(char *str, int *i, t_env *env, int exit_status)
 	return (var_value);
 }
 
+/*
+** Ajoute un caractère à la fin d'une chaîne
+** Utilisé pour construire progressivement la chaîne expandée
+** Retourne: nouvelle chaîne avec le caractère ajouté
+*/
 static char	*append_char(char *result, char c)
 {
 	char	*char_str;
@@ -62,6 +82,11 @@ static char	*append_char(char *result, char c)
 	return (new_result);
 }
 
+/*
+** Expanse toutes les variables d'environnement dans une chaîne
+** Remplace $VAR par sa valeur, gère $?
+** Retourne: nouvelle chaîne avec variables expansées
+*/
 char	*expand_variables(char *str, t_env *env, int exit_status)
 {
 	char	*result;

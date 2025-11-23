@@ -12,6 +12,10 @@
 
 #include "../../includes/minishell.h"
 
+/*
+** Gestionnaire pour SIGINT (Ctrl-C) en mode interactif
+** Affiche une nouvelle ligne et un nouveau prompt
+*/
 void	handle_sigint(int sig)
 {
 	(void)sig;
@@ -21,6 +25,10 @@ void	handle_sigint(int sig)
 	rl_redisplay();
 }
 
+/*
+** Gestionnaire pour SIGINT (Ctrl-C) dans un processus fils
+** Affiche juste une nouvelle ligne
+*/
 void	handle_sigint_child(int sig)
 {
 	(void)sig;
