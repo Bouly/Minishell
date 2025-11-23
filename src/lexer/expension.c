@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 18:25:27 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/21 18:59:59 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 12:46:14 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,33 @@ static char	*get_var_value(char *var_name, t_env *env, int exit_status)
 	return (ft_strdup(value));
 }
 
+static char	*process_variable(char *str, int *i, t_env *env, int exit_status)
+{
+	char	*var_name;
+	char	*var_value;
+
+	var_name = get_var_name(str, i);
+	var_value = get_var_value(var_name, env, exit_status);
+	free(var_name);
+	return (var_value);
+}
+
+static char	*append_char(char *result, char c)
+{
+	char	*char_str;
+	char	*new_result;
+
+	char_str = ft_strndup(&c, 1);
+	new_result = ft_strjoin(result, char_str);
+	free(char_str);
+	return (new_result);
+}
+
 char	*expand_variables(char *str, t_env *env, int exit_status)
 {
 	char	*result;
-	char	*var_name;
-	char	*var_value;
+	char	*tmp;
 	int		i;
-	char	*tmp_char;
 
 	result = ft_strdup("");
 	i = 0;
@@ -55,19 +75,12 @@ char	*expand_variables(char *str, t_env *env, int exit_status)
 		if (str[i] == '$' && (ft_isalnum(str[i + 1]) || str[i + 1] == '_'
 				|| str[i + 1] == '?'))
 		{
-			var_name = get_var_name(str, &i);
-			var_value = get_var_value(var_name, env, exit_status);
-			result = ft_strjoin(result, var_value);
-			free(var_name);
-			free(var_value);
+			tmp = process_variable(str, &i, env, exit_status);
+			result = ft_strjoin(result, tmp);
+			free(tmp);
 		}
 		else
-		{
-			tmp_char = ft_strndup(&str[i], 1);
-			result = ft_strjoin(result, tmp_char);
-			free(tmp_char);
-			i++;
-		}
+			result = append_char(result, str[i++]);
 	}
 	return (result);
 }

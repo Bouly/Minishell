@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 17:30:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/19 20:43:12 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 12:25:38 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,15 +65,15 @@ static void	setup_child_output(t_ast *node)
 	}
 }
 
-void	child_exec(t_ast *node, char *path, char **envp, t_ast *root)
+void	child_exec(t_ast *node, char *path, t_mother *mother)
 {
 	setup_signals_exec();
 	setup_child_input(node);
 	setup_child_output(node);
-	close_all_ast_heredocs(root);
-	execve(path, node->args, envp);
+	close_all_ast_heredocs(mother->root);
+	execve(path, node->args, mother->envp);
 	perror("execve");
 	free(path);
-	ft_free(envp);
+	ft_free(mother->envp);
 	exit(1);
 }

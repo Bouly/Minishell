@@ -6,11 +6,12 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 19:00:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/23 11:07:55 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 12:10:34 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+#include <sys/stat.h>
 
 static int	count_only_words_tokens(t_token **lst)
 {
@@ -74,6 +75,17 @@ char	*get_path_from_env(char **envp)
 	return ("/usr/bin:/bin");
 }
 
+static char	*check_absolute_path(char *cmd)
+{
+	struct stat	statbuf;
+
+	if (stat(cmd, &statbuf) == 0 && S_ISDIR(statbuf.st_mode))
+		return (NULL);
+	if (access(cmd, X_OK) == 0)
+		return (ft_strdup(cmd));
+	return (NULL);
+}
+
 char	*find_command(char *cmd, char **envp)
 {
 	char	**dirs;
@@ -83,9 +95,7 @@ char	*find_command(char *cmd, char **envp)
 
 	if (ft_strchr(cmd, '/'))
 	{
-		if (access(cmd, X_OK) == 0)
-			return (ft_strdup(cmd));
-		return (NULL);
+		return (check_absolute_path(cmd));
 	}
 	dirs = ft_split(get_path_from_env(envp), ':');
 	if (!dirs)

@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 00:00:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/23 11:14:44 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 12:11:28 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,7 @@ static int	process_single_heredoc(t_heredoc *heredoc, t_shell *shell)
 	}
 	close(pipefd[1]);
 	waitpid(pid, &status, 0);
-	heredoc->fd = pipefd[0];
-	return (0);
+	return (heredoc->fd = pipefd[0], 0);
 }
 
 static void	close_all_heredoc_fds(t_heredoc *heredocs)

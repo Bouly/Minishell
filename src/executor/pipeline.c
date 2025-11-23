@@ -6,15 +6,15 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 17:10:10 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/21 21:20:35 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 12:27:47 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-static void	close_fd(int fd[2], int n)
+static void	setup_pipe_fd(int fd[2], int side)
 {
-	if (n == 1)
+	if (side == 1)
 		dup2(fd[1], STDOUT_FILENO);
 	else
 		dup2(fd[0], STDIN_FILENO);
@@ -22,7 +22,19 @@ static void	close_fd(int fd[2], int n)
 	close(fd[1]);
 }
 
-void	pipe_exec(t_ast *three, char **envp, t_ast *root, t_shell *shell)
+static void	execute_pipe_child(t_ast *node, int fd[2], int side,
+		t_mother *mother)
+{
+	setup_signals_exec();
+	setup_pipe_fd(fd, side);
+	mother_exec(node, mother);
+	ast_free(&mother->root);
+	ft_free(mother->envp);
+	env_free(mother->shell->env);
+	exit(0);
+}
+
+void	pipe_exec(t_ast *three, t_mother *mother)
 {
 	int	pid;
 	int	pid2;
@@ -33,30 +45,14 @@ void	pipe_exec(t_ast *three, char **envp, t_ast *root, t_shell *shell)
 	setup_signals_child();
 	pid = fork();
 	if (pid == 0)
-	{
-		setup_signals_exec();
-		close_fd(fd, 1);
-		mother_exec(three->left, envp, root, shell);
-		ast_free(&root);
-		ft_free(envp);
-		env_free(shell->env);
-		exit(0);
-	}
+		execute_pipe_child(three->left, fd, 1, mother);
 	pid2 = fork();
 	if (pid2 == 0)
-	{
-		setup_signals_exec();
-		close_fd(fd, 0);
-		mother_exec(three->right, envp, root, shell);
-		ast_free(&root);
-		ft_free(envp);
-		env_free(shell->env);
-		exit(0);
-	}
+		execute_pipe_child(three->right, fd, 0, mother);
 	close(fd[0]);
 	close(fd[1]);
 	waitpid(pid, NULL, 0);
 	waitpid(pid2, &status, 0);
 	setup_signals_interactive();
-	shell->exit_status = get_exit_status(status);
+	mother->shell->exit_status = get_exit_status(status);
 }

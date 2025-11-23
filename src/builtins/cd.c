@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 01:00:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/21 00:10:36 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 11:51:21 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,11 @@ int	builtin_cd(char **args, t_env **env)
 {
 	char	*path;
 
+	if (args[1] && args[2])
+	{
+		ft_putstr_fd("cd: too many arguments\n", 2);
+		return (1);
+	}
 	path = get_target_dir(args, *env);
 	if (!path)
 		return (1);

@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 16:57:57 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/21 03:09:56 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 12:55:41 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,17 @@ static void	handle_input_redirect(t_token *current, t_ast *node)
 
 static void	handle_output_redirect(t_token *current, t_ast *node)
 {
+	int	fd;
+
 	if (current->type == TOKEN_REDIRECT_OUT && current->next)
 	{
 		if (node->outfile)
+		{
+			fd = open(node->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (fd >= 0)
+				close(fd);
 			free(node->outfile);
+		}
 		node->outfile = ft_strdup(current->next->value);
 		node->append = 0;
 	}
@@ -35,10 +42,20 @@ static void	handle_output_redirect(t_token *current, t_ast *node)
 
 static void	handle_append_redirect(t_token *current, t_ast *node)
 {
+	int	fd;
+
 	if (current->type == TOKEN_APPEND && current->next)
 	{
 		if (node->outfile)
+		{
+			if (node->append)
+				fd = open(node->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			else
+				fd = open(node->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (fd >= 0)
+				close(fd);
 			free(node->outfile);
+		}
 		node->outfile = ft_strdup(current->next->value);
 		node->append = 1;
 	}

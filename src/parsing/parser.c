@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 02:30:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/23 11:31:04 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 12:49:46 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,24 @@ static t_token	*before_pipe(t_token **tokens)
 	return (tmp);
 }
 
+static int	handle_pipe_error(t_token *left_tokens, t_token *pipe, t_ast *tree)
+{
+	if (left_tokens->type == TOKEN_PIPE)
+	{
+		ft_putstr_fd("bash: syntax error near unexpected token `||'\n", 2);
+		token_free(&left_tokens);
+		free(tree);
+		return (0);
+	}
+	if (!pipe->next || pipe->next->type == TOKEN_PIPE)
+	{
+		ft_putstr_fd("bash: syntax error near unexpected token `||'\n", 2);
+		ast_free(&tree);
+		return (0);
+	}
+	return (1);
+}
+
 t_ast	*parse(t_token *tokens)
 {
 	t_token	*pipe;
@@ -51,21 +69,10 @@ t_ast	*parse(t_token *tokens)
 	{
 		tree = create_ast(NODE_PIPE, NULL);
 		left_tokens = before_pipe(&tokens);
-		if (left_tokens->type == TOKEN_PIPE)
-		{
-			ft_putstr_fd("bash: syntax error near unexpected token `||'\n", 2);
-			token_free(&left_tokens);
-			free(tree);
+		if (!handle_pipe_error(left_tokens, pipe, tree))
 			return (NULL);
-		}
 		tree->left = parse(left_tokens);
 		token_free(&left_tokens);
-		if (!pipe->next || pipe->next->type == TOKEN_PIPE)
-		{
-			ft_putstr_fd("bash: syntax error near unexpected token `||'\n", 2);
-			ast_free(&tree);
-			return (NULL);
-		}
 		tree->right = parse(pipe->next);
 	}
 	else
