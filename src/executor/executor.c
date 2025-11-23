@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 16:29:04 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/21 21:20:26 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 11:16:44 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,20 @@ int	get_exit_status(int status)
 		return (128 + WTERMSIG(status));
 	}
 	return (0);
+}
+
+void	exec_builtin_with_redir(t_ast *node, t_shell *shell, t_ast *root)
+{
+	int	saved_fd[2];
+
+	if (!setup_builtin_redirections(node, saved_fd))
+	{
+		shell->exit_status = 1;
+		return ;
+	}
+	shell->exit_status = exec_builtin(node->args, shell);
+	restore_redirections(saved_fd);
+	close_all_ast_heredocs(root);
 }
 
 void	cmd_exec(t_ast *node, char **envp, t_shell *shell, t_ast *root)
@@ -50,6 +64,7 @@ void	cmd_exec(t_ast *node, char **envp, t_shell *shell, t_ast *root)
 			}
 			close(fd);
 			shell->exit_status = 0;
+			close_all_ast_heredocs(root);
 			return ;
 		}
 		ft_putstr_fd("syntax error: no command\n", 2);

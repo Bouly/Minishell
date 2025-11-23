@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 17:30:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/16 17:28:59 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 11:17:00 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,18 +104,4 @@ void	restore_redirections(int saved_fd[2])
 		dup2(saved_fd[1], STDOUT_FILENO);
 		close(saved_fd[1]);
 	}
-}
-
-void	exec_builtin_with_redir(t_ast *node, t_shell *shell, t_ast *root)
-{
-	int	saved_fd[2];
-
-	if (!setup_builtin_redirections(node, saved_fd))
-	{
-		shell->exit_status = 1;
-		return ;
-	}
-	shell->exit_status = exec_builtin(node->args, shell);
-	restore_redirections(saved_fd);
-	close_all_ast_heredocs(root);
 }

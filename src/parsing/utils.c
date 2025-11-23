@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 19:00:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/21 03:18:47 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 11:07:55 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ char	*get_path_from_env(char **envp)
 			return (envp[i] + 5);
 		i++;
 	}
-	return (NULL);
+	return ("/usr/bin:/bin");
 }
 
 char	*find_command(char *cmd, char **envp)

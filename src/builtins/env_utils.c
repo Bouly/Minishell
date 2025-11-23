@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/14 01:00:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/21 17:29:28 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 11:11:09 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,8 @@ static void	init_default_env(t_env **env)
 	}
 	else
 		env_set(env, "SHLVL", "1");
-	if (!env_get(*env, "_"))
-		env_set(env, "_", "");
+	if (!env_get(*env, "PATH"))
+		env_set(env, "PATH", "/usr/bin:/bin");
 }
 
 t_env	*env_init(char **envp)
