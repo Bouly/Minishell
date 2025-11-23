@@ -6,11 +6,11 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 12:35:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/23 12:35:25 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/23 14:05:00 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 t_mother	init_mother(t_shell *shell)
 {
