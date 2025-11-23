@@ -1,0 +1,22 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/Libft": true,
+        "Libft": true,
+        "**/.vscode": true,
+        ".vscode": true,
+        "**/.gitignore": true,
+        ".gitignore": true,
+        "**/ignore": true,
+        "ignore": true,
+        "**/obj": true,
+        "obj": true,
+        "**/minishell": true,
+        "minishell": true
+    },
+    "explorerExclude.backup": {}
+}
