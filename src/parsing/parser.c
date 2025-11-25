@@ -6,7 +6,7 @@
 /*   By: abendrih <abendrih@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/05 02:30:00 by abendrih          #+#    #+#             */
-/*   Updated: 2025/11/23 22:03:55 by abendrih         ###   ########.fr       */
+/*   Updated: 2025/11/25 21:14:27 by abendrih         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,16 +75,50 @@ static int	handle_pipe_error(t_token *left_tokens, t_token *pipe, t_ast *tree)
 }
 
 /*
+** Vérifie si une redirection est suivie d'un token valide
+** Retourne: 1 si OK, 0 si erreur de syntaxe
+*/
+static int	validate_redirect_syntax(t_token *tokens)
+{
+	t_token *(current) = tokens;
+	while (current)
+	{
+		if (current->type == TOKEN_REDIRECT_IN
+			|| current->type == TOKEN_REDIRECT_OUT
+			|| current->type == TOKEN_APPEND || current->type == TOKEN_HEREDOC)
+		{
+			if (!current->next || current->next->type == TOKEN_PIPE
+				|| current->next->type == TOKEN_REDIRECT_IN
+				|| current->next->type == TOKEN_REDIRECT_OUT
+				|| current->next->type == TOKEN_APPEND
+				|| current->next->type == TOKEN_HEREDOC)
+			{
+				ft_putstr_fd("bash: syntax error near unexpected token `", 2);
+				if (!current->next)
+					ft_putstr_fd("newline", 2);
+				else
+					ft_putstr_fd(current->next->value, 2);
+				return (ft_putstr_fd("'\n", 2), 0);
+			}
+		}
+		current = current->next;
+	}
+	return (1);
+}
+
+/*
 ** Parse récursivement les tokens en arbre syntaxique (AST)
 ** Gère les pipes et construit l'arbre gauche/droite
 ** Retourne: nœud AST ou NULL si erreur
 */
 t_ast	*parse(t_token *tokens)
 {
-	t_token	*pipe;
 	t_ast	*tree;
+	t_token	*pipe;
 	t_token	*left_tokens;
 
+	if (!validate_redirect_syntax(tokens))
+		return (NULL);
 	pipe = find_pipe(tokens);
 	if (pipe)
 	{
@@ -92,8 +126,7 @@ t_ast	*parse(t_token *tokens)
 		left_tokens = before_pipe(&tokens);
 		if (!handle_pipe_error(left_tokens, pipe, tree))
 			return (NULL);
-		tree->left = parse(left_tokens);
-		token_free(&left_tokens);
+		free((tree->left = parse(left_tokens), token_free(&left_tokens), NULL));
 		tree->right = parse(pipe->next);
 		if (!tree->left || !tree->right)
 			return (ast_free(&tree), NULL);

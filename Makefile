@@ -22,7 +22,21 @@ RM          = rm -rf
 
 SRC_DIR     = src
 OBJ_DIR     = obj
-SRC         = $(shell find $(SRC_DIR) -name "*.c")
+SRC         = src/main.c \
+              src/utils/main_utils.c src/utils/input.c \
+              src/builtins/echo.c src/builtins/env.c src/builtins/builtin_utils.c \
+              src/builtins/pwd.c src/builtins/export_utils.c src/builtins/export.c \
+              src/builtins/unset.c src/builtins/env_utils.c src/builtins/cd.c \
+              src/builtins/exit.c \
+              src/parsing/parser.c src/parsing/redirections.c src/parsing/heredoc_utils.c \
+              src/parsing/heredoc_reader.c src/parsing/heredoc_process.c \
+              src/parsing/herdoc_ultils2.c src/parsing/ast.c src/parsing/utils.c \
+              src/executor/executor.c src/executor/executor_utils.c \
+              src/executor/child_process.c src/executor/pipeline.c \
+              src/executor/builtin_redir.c \
+              src/lexer/lexer.c src/lexer/lexer_util.c src/lexer/token.c \
+              src/lexer/expension.c \
+              src/signals/signals.c src/signals/signal_handlers.c
 OBJ         = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 # ============================== COLORS =================================== #
